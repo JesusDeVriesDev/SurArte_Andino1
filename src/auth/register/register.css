@@ -1,0 +1,301 @@
+/* ============================================
+   login.css — Auth layout (login & register)
+   ============================================ */
+
+.auth-body {
+  overflow: auto;
+  background: var(--color-ink);
+  min-height: 100vh;
+}
+
+/* Sobreescribir layout.css que bloquea el scroll */
+html, body { height: auto !important; overflow: auto !important; }
+
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+
+/* ── Panel izquierdo visual ── */
+.auth-visual {
+  background: var(--color-ink);
+  background-image:
+    radial-gradient(ellipse 60% 60% at 20% 50%, rgba(139,58,28,.45) 0%, transparent 68%),
+    radial-gradient(ellipse 40% 40% at 80% 75%, rgba(29,78,107,.3) 0%, transparent 65%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Rejilla decorativa */
+.auth-visual::after {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: .045;
+  background-image:
+    repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(201,146,42,.6) 40px, rgba(201,146,42,.6) 41px),
+    repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(201,146,42,.6) 40px, rgba(201,146,42,.6) 41px);
+  pointer-events: none;
+}
+
+.auth-visual-content { position: relative; z-index: 1; width: 100%; max-width: 380px; }
+
+.auth-brand {
+  font-family: var(--ff-display);
+  font-size: clamp(3.2rem, 5.5vw, 5.2rem);
+  font-weight: 900;
+  line-height: .88;
+  letter-spacing: -.03em;
+  color: var(--color-white);
+}
+.auth-brand em {
+  display: block;
+  font-style: italic;
+  color: var(--color-gold);
+}
+
+.auth-visual-sub {
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 300;
+  color: rgba(250,245,236,.38);
+  margin-top: 1.1rem;
+  letter-spacing: .02em;
+}
+
+/* Línea decorativa dorada bajo el título */
+.auth-visual-content .gold-line {
+  margin: 1.4rem 0 1.6rem;
+}
+
+/* ── Panel derecho formulario ── */
+.auth-panel {
+  background: var(--color-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 48px;
+}
+
+.auth-form-wrap {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Header del form */
+.auth-header { margin-bottom: 2rem; }
+
+.auth-title {
+  font-family: var(--ff-display);
+  font-size: clamp(2.2rem, 3.5vw, 3rem);
+  font-weight: 900;
+  line-height: .92;
+  letter-spacing: -.025em;
+  color: var(--color-ink);
+  margin-top: .6rem;
+}
+.auth-title em {
+  font-style: italic;
+  color: var(--color-clay);
+}
+
+/* ── Inputs — asegurar fondo crema sobre panel crema ── */
+.auth-panel .input {
+  background: var(--color-white);
+  border: 1.5px solid var(--color-cream-dk);
+}
+.auth-panel .input:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(201,146,42,.12);
+}
+.auth-panel .input.input--error,
+.auth-panel .input--error {
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 3px rgba(239,68,68,.1);
+}
+
+/* ── Meta row (recordarme + olvidé) ── */
+.auth-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.1rem;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.auth-check {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 300;
+  color: var(--color-ink-mid);
+  cursor: pointer;
+}
+.auth-check input[type="checkbox"] {
+  width: 15px; height: 15px;
+  accent-color: var(--color-gold);
+  cursor: pointer;
+}
+
+.auth-link {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  transition: opacity var(--duration-base);
+}
+.auth-link:hover { opacity: .7; text-decoration: underline; }
+
+/* ── Divider "o continúa con" ── */
+.auth-divider {
+  text-align: center;
+  position: relative;
+  margin: 1.6rem 0;
+  color: rgba(26,18,8,.3);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: var(--color-cream-dk);
+}
+.auth-divider::before { left: 0; }
+.auth-divider::after  { right: 0; }
+
+/* ── Social ── */
+.social-auth-row { display: flex; gap: .75rem; }
+.social-auth-btn { flex: 1; justify-content: center; }
+
+/* ── Error del servidor ── */
+.auth-error {
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  color: #b91c1c;
+  border-radius: var(--r);
+  padding: .8rem 1rem;
+  font-size: var(--fs-sm);
+  font-family: var(--ff-body);
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  animation: fadeUp .35s var(--ease) both;
+}
+.auth-error svg { flex-shrink: 0; margin-top: 2px; }
+
+/* ── Footer ── */
+.auth-footer-txt {
+  text-align: center;
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 300;
+  color: var(--color-ink-mid);
+  margin-top: 1.6rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .auth-layout { grid-template-columns: 1fr; }
+  .auth-visual  { display: none; }
+  .auth-panel   { padding: 48px 28px; }
+}
+
+/* ============================================
+   register.css — Extiende login.css
+   ============================================ */
+
+/* ── Perks en panel visual ── */
+.auth-perks {
+  list-style: none; padding: 0;
+  margin: 2rem 0 0;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.auth-perk {
+  display: flex; align-items: flex-start; gap: .8rem;
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 300;
+  color: rgba(250,245,236,.5);
+  line-height: 1.5;
+}
+.perk-icon {
+  color: var(--color-gold);
+  font-size: .9rem;
+  flex-shrink: 0;
+  margin-top: .15rem;
+}
+
+/* ── Input con botón de ojo ── */
+.input-pass-wrap { position: relative; }
+.input-pass-wrap .input { padding-right: 2.8rem; }
+
+.pass-toggle {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: rgba(26,18,8,.35); padding: 0;
+  display: flex; align-items: center;
+  transition: color var(--duration-base);
+}
+.pass-toggle:hover { color: var(--color-ink); }
+
+/* ── Barra de fortaleza ── */
+.strength-bar {
+  height: 3px;
+  background: var(--color-cream-dk);
+  border-radius: var(--r-full);
+  margin-top: .55rem;
+  overflow: hidden;
+}
+.strength-fill {
+  height: 100%; width: 0%;
+  border-radius: var(--r-full);
+  transition: width .45s var(--ease), background .45s var(--ease);
+}
+.strength-fill.s1 { width: 25%; background: var(--color-error); }
+.strength-fill.s2 { width: 50%; background: #f97316; }
+.strength-fill.s3 { width: 75%; background: var(--color-warning); }
+.strength-fill.s4 { width: 100%; background: var(--color-success); }
+
+.strength-label {
+  display: block;
+  font-family: var(--ff-mono);
+  font-size: 0.6rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-top: .3rem;
+  min-height: 1em;
+  transition: color .3s;
+}
+.strength-label.s1 { color: var(--color-error); }
+.strength-label.s2 { color: #f97316; }
+.strength-label.s3 { color: var(--color-warning); }
+.strength-label.s4 { color: var(--color-success); }
+
+/* ── Términos ── */
+.terms-row {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .auth-layout { grid-template-columns: 1fr; }
+  .auth-visual  { display: none; }
+}

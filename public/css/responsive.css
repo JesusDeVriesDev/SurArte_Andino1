@@ -1,0 +1,39 @@
+/* ============================================
+   SurArte Andino — Media queries responsivas
+   Mobile-first: base = móvil, luego se amplía
+   ============================================ */
+
+/* ── TABLET (≥ 768px) ── */
+@media (min-width: 768px) {
+  .grid-2-md { grid-template-columns: repeat(2, 1fr); }
+  .hide-mobile { display: block; }
+}
+
+/* ── DESKTOP (≥ 1024px) ── */
+@media (min-width: 1024px) {
+  .hide-mobile { display: block; }
+  #sidenav { display: flex; }
+  #mobilebar { display: none; }
+  .grid-3-lg { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ── MOBILE (<= 900px) ── */
+@media (max-width: 900px) {
+  :root { --nav-w: 0px; }
+  #sidenav   { display: none !important; }
+  #mobilebar { display: flex !important; }
+  #pgdots    { display: none; }
+  .page      { top: 58px; }
+  .pg-inner  { padding: var(--sp-10) var(--page-padding) var(--sp-16); }
+  .grid-2    { grid-template-columns: 1fr; }
+  .grid-3    { grid-template-columns: repeat(2, 1fr); }
+  .hide-desktop { display: block; }
+  .show-desktop { display: none !important; }
+}
+
+/* ── SMALL MOBILE (<= 580px) ── */
+@media (max-width: 580px) {
+  .grid-3  { grid-template-columns: 1fr; }
+  .grid-4  { grid-template-columns: repeat(2, 1fr); }
+  .btn-lg  { padding: 13px 22px; }
+}

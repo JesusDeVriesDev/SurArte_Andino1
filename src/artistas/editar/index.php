@@ -1,0 +1,155 @@
+<?php
+ob_start();
+$pageTitle = 'Editar Perfil';
+$pageId    = 'artistas';
+require_once '../../_layout/head.php';
+require_once '../../../config/db.php';
+
+if (!$user || $user['rol'] !== 'artista') {
+    header('Location: ' . $base . '/src/artistas/artistas.php'); exit;
+}
+$_guardVerificado = $_SESSION['artista_verificado'] ?? false;
+if (!$_guardVerificado) {
+    try {
+        $gStmt = db()->prepare("SELECT verificado FROM artistas WHERE usuario_id = ?::uuid LIMIT 1");
+        $gStmt->execute([$_SESSION['user_id']]);
+        $gRow = $gStmt->fetch(PDO::FETCH_ASSOC);
+        $_guardVerificado = ($gRow && $gRow['verificado'] == true);
+        if ($_guardVerificado) $_SESSION['artista_verificado'] = true; // actualizar sesión
+    } catch (Exception $e) { $_guardVerificado = false; }
+}
+if (!$_guardVerificado) {
+    $_SESSION['_flash_warn'] = 'Tu perfil aún no ha sido verificado. Espera la revisión del administrador.';
+    header('Location: ' . $base . '/src/artistas/artistas.php'); exit;
+}
+
+$ok    = $_SESSION['editar_ok']    ?? null;
+$error = $_SESSION['editar_error'] ?? null;
+unset($_SESSION['editar_ok'], $_SESSION['editar_error']);
+
+try {
+    $stmt = db()->prepare("SELECT * FROM artistas WHERE usuario_id = ?::uuid");
+    $stmt->execute([$_SESSION['user_id']]);
+    $artista = $stmt->fetch();
+    if (!$artista) { header('Location: ' . $base . '/src/artistas/registro/index.php'); exit; }
+
+    $uStmt = db()->prepare("SELECT nombre, email, bio, telefono FROM usuarios WHERE id = ?::uuid");
+    $uStmt->execute([$_SESSION['user_id']]);
+    $uData = $uStmt->fetch();
+} catch (PDOException $e) {
+    $dbError = $e->getMessage();
+}
+
+$disciplinas = ['Barniz de Pasto','Cerámica','Pintura','Escultura','Música Andina','Danza','Literatura',
+                'Fotografía','Teatro','Artesanía','Tejido','Orfebrería','Otro'];
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="<?= $base ?>/src/artistas/artistas.css"/>
+  <link rel="stylesheet" href="<?= $base ?>/src/artistas/editar/editar.css"/>
+</head>
+<main>
+  <div style="max-width:680px;margin:0 auto;padding-top:48px">
+    <a href="<?= $base ?>/src/artistas/perfil/index.php" style="font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,18,8,.38);text-decoration:none">← Mi perfil</a>
+    <div class="eyebrow" style="margin-top:16px">Configuración</div>
+    <h1 class="page-h1" style="margin-bottom:8px">Editar <em>perfil</em></h1>
+    <p class="page-lead" style="margin-bottom:32px">Actualiza tu información artística y datos de contacto.</p>
+
+    <?php if ($ok): ?><div class="alert alert-ok" style="margin-bottom:20px">✅ <?= htmlspecialchars($ok) ?></div><?php endif; ?>
+    <?php if ($error): ?><div class="alert alert-err" style="margin-bottom:20px">❌ <?= htmlspecialchars($error) ?></div><?php endif; ?>
+
+    <?php if (isset($artista)): ?>
+    <div class="form-card" style="max-width:100%">
+      <div style="display:flex;gap:0;border-bottom:1px solid var(--cream-dk);margin-bottom:28px">
+        <button class="tab-btn active" data-tab="perfil" style="padding:10px 20px;font-family:var(--ff-m);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--gold);color:var(--gold)">Perfil artístico</button>
+        <button class="tab-btn" data-tab="cuenta" style="padding:10px 20px;font-family:var(--ff-m);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:rgba(26,18,8,.38)">Mi cuenta</button>
+      </div>
+      <div id="tab-perfil">
+        <form method="POST" action="guardar.php">
+          <input type="hidden" name="tipo" value="perfil"/>
+          <div class="form-grid-2">
+            <div class="field">
+              <label class="field-label">Nombre artístico *</label>
+              <input class="field-input" type="text" name="nombre" required value="<?= htmlspecialchars($artista['nombre']) ?>" maxlength="180"/>
+            </div>
+            <div class="field">
+              <label class="field-label">Disciplina *</label>
+              <select class="field-select" name="disciplina" required>
+                <?php foreach ($disciplinas as $d): ?>
+                  <option value="<?= htmlspecialchars($d) ?>" <?= $artista['disciplina'] === $d ? 'selected' : '' ?>><?= htmlspecialchars($d) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Biografía</label>
+            <textarea class="field-textarea" name="bio" rows="4"><?= htmlspecialchars($artista['bio'] ?? '') ?></textarea>
+          </div>
+          <div class="form-grid-2">
+            <div class="field">
+              <label class="field-label">Municipio</label>
+              <input class="field-input" type="text" name="municipio" value="<?= htmlspecialchars($artista['municipio'] ?? '') ?>" maxlength="100"/>
+            </div>
+            <div class="field">
+              <label class="field-label">Foto de perfil (URL)</label>
+              <input class="field-input" type="url" name="foto_url" value="<?= htmlspecialchars($artista['foto_url'] ?? '') ?>"/>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="field">
+              <label class="field-label">Instagram</label>
+              <input class="field-input" type="text" name="instagram" value="<?= htmlspecialchars($artista['instagram'] ?? '') ?>" placeholder="@usuario"/>
+            </div>
+            <div class="field">
+              <label class="field-label">Sitio web / Facebook</label>
+              <input class="field-input" type="text" name="website" value="<?= htmlspecialchars($artista['website'] ?? '') ?>"/>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-gold">Guardar cambios</button>
+            <a href="<?= $base ?>/src/artistas/perfil/index.php" class="btn btn-outline">Cancelar</a>
+          </div>
+        </form>
+      </div>
+      <div id="tab-cuenta" style="display:none">
+        <form method="POST" action="guardar.php" id="artistaCuentaForm">
+          <input type="hidden" name="tipo" value="cuenta"/>
+          <div class="field">
+            <label class="field-label">Nombre completo</label>
+            <input class="field-input" type="text" name="nombre_usuario" value="<?= htmlspecialchars($uData['nombre'] ?? '') ?>"/>
+          </div>
+          <div class="field">
+            <label class="field-label">Bio personal</label>
+            <textarea class="field-textarea" name="bio_usuario" rows="3"><?= htmlspecialchars($uData['bio'] ?? '') ?></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label">Teléfono</label>
+            <input class="field-input" type="tel" name="telefono" value="<?= htmlspecialchars($uData['telefono'] ?? '') ?>"/>
+          </div>
+          <div class="field">
+            <label class="field-label">Nueva contraseña <span style="font-weight:300;text-transform:none">(dejar vacío para no cambiar)</span></label>
+            <input class="field-input" type="password" id="artista-password" name="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password"/>
+            <div class="strength-bar"><div class="strength-fill" id="artista-strengthFill"></div></div>
+            <span class="strength-label" id="artista-strengthLabel"></span>
+            <span class="input-error-msg" id="artista-passErr"></span>
+          </div>
+          <div class="field">
+            <label class="field-label">Confirmar nueva contraseña</label>
+            <input class="field-input" type="password" id="artista-confirm" name="confirm" placeholder="Repite la contraseña" autocomplete="new-password"/>
+            <span class="input-error-msg" id="artista-confirmErr"></span>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-gold" id="artista-saveBtn">Guardar cuenta</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+    <?php endif; ?>
+  </div>
+</main>
+<script src="<?= $base ?>/src/artistas/editar/editar.js"></script>
+</body>
+</html>

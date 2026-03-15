@@ -1,0 +1,71 @@
+/* ============================================
+   SurArte Andino — Tipografía global
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap');
+
+body {
+  font-family: var(--ff-body);
+  font-size: var(--fs-base);
+  font-weight: 300;
+  color: var(--color-ink);
+}
+
+/* Display — para títulos grandes */
+.txt-display { font-family: var(--ff-display); }
+.txt-mono    { font-family: var(--ff-mono); }
+
+/* Tamaños semánticos */
+.txt-xs   { font-size: var(--fs-xs); }
+.txt-sm   { font-size: var(--fs-sm); }
+.txt-base { font-size: var(--fs-base); }
+.txt-md   { font-size: var(--fs-md); }
+.txt-lg   { font-size: var(--fs-lg); }
+.txt-xl   { font-size: var(--fs-xl); }
+
+/* Pesos */
+.fw-light  { font-weight: 300; }
+.fw-normal { font-weight: 400; }
+.fw-semi   { font-weight: 600; }
+.fw-bold   { font-weight: 700; }
+.fw-black  { font-weight: 900; }
+
+/* Colores de texto */
+.txt-gold   { color: var(--color-gold); }
+.txt-clay   { color: var(--color-clay); }
+.txt-sky    { color: var(--color-sky); }
+.txt-muted  { color: rgba(26,18,8,.45); }
+.txt-white  { color: var(--color-white); }
+.txt-italic { font-style: italic; }
+
+/* Eyebrow — etiqueta sobre títulos */
+.eyebrow {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  display: flex; align-items: center; gap: 10px;
+}
+.eyebrow::before {
+  content: '';
+  width: 22px; height: 1px;
+  background: currentColor;
+  display: block;
+}
+
+/* Encabezados de sección */
+.section-title {
+  font-family: var(--ff-display);
+  font-size: clamp(2.2rem, 4.5vw, 4rem);
+  font-weight: 900;
+  line-height: .95;
+  letter-spacing: -.03em;
+}
+.section-title em { font-style: italic; }
+
+.gold-line {
+  width: 44px; height: 3px;
+  background: var(--color-gold);
+  border-radius: 2px;
+  margin: var(--sp-6) 0;
+}

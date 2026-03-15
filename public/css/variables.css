@@ -1,0 +1,72 @@
+/* ============================================
+   SurArte Andino — Variables CSS globales
+   Fuente única de verdad para colores, tipografía y espaciado
+   ============================================ */
+:root {
+  /* Paleta principal */
+  --color-gold:       #C9922A;
+  --color-gold-lt:    #E8B84B;
+  --color-gold-pale:  #F5E6C8;
+  --color-ink:        #1A1208;
+  --color-ink-mid:    #3D2B10;
+  --color-clay:       #8B3A1C;
+  --color-clay-lt:    #B5552E;
+  --color-sky:        #1D4E6B;
+  --color-sky-lt:     #2E7AA8;
+  --color-cream:      #FAF5EC;
+  --color-cream-dk:   #EDE4D0;
+  --color-white:      #FFFEF9;
+  --color-success:    #22c55e;
+  --color-error:      #ef4444;
+  --color-warning:    #f59e0b;
+
+  /* Tipografía */
+  --ff-display: 'Playfair Display', Georgia, serif;
+  --ff-body:    'Cormorant Garamond', Georgia, serif;
+  --ff-mono:    'DM Mono', monospace;
+
+  --fs-xs:   0.65rem;
+  --fs-sm:   0.85rem;
+  --fs-base: 1rem;
+  --fs-md:   1.15rem;
+  --fs-lg:   1.35rem;
+  --fs-xl:   1.75rem;
+  --fs-2xl:  2.25rem;
+  --fs-3xl:  3rem;
+  --fs-hero: clamp(3rem, 7vw, 6rem);
+
+  /* Espaciado */
+  --sp-1: 0.25rem;   --sp-2: 0.5rem;  --sp-3: 0.75rem;
+  --sp-4: 1rem;      --sp-6: 1.5rem;  --sp-8: 2rem;
+  --sp-10: 2.5rem;   --sp-12: 3rem;   --sp-16: 4rem;
+  --sp-20: 5rem;     --sp-24: 6rem;
+
+  /* Bordes */
+  --r-sm: 4px;   --r: 8px;   --r-lg: 16px;   --r-full: 9999px;
+
+  /* Sombras */
+  --sh-sm: 0 2px 8px rgba(26,18,8,.08);
+  --sh:    0 4px 24px rgba(26,18,8,.12);
+  --sh-lg: 0 12px 48px rgba(26,18,8,.22);
+  --sh-gold: 0 8px 28px rgba(201,146,42,.35);
+
+  /* Transiciones */
+  --ease: cubic-bezier(.4,0,.2,1);
+  --duration-fast:   0.18s;
+  --duration-base:   0.28s;
+  --duration-slow:   0.45s;
+
+  /* Layout */
+  --nav-w:        72px;
+  --max-content:  1160px;
+  --page-padding: 5vw;
+}
+
+/* Modo oscuro automático (variables alternativas) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-cream:    #1E180C;
+    --color-cream-dk: #261E10;
+    --color-white:    #2A2010;
+  }
+}

@@ -1,0 +1,11 @@
+/* ============================================
+   SurArte Andino — Punto de entrada CSS
+   Importa todos los módulos en orden correcto
+   ============================================ */
+@import url('./variables.css');
+@import url('./reset.css');
+@import url('./typography.css');
+@import url('./layout.css');
+@import url('./components.css');
+@import url('./animations.css');
+@import url('./responsive.css');

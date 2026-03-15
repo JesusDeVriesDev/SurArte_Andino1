@@ -1,0 +1,17 @@
+/* ============================================
+   SurArte Andino — Reset / Normalize
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img, video, svg { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+ul, ol { list-style: none; }
+button { cursor: pointer; border: none; background: none; font: inherit; }
+input, textarea, select { font: inherit; border: none; outline: none; }
+h1,h2,h3,h4,h5,h6 { font-weight: inherit; line-height: 1.1; }
+table { border-collapse: collapse; }
+::selection { background: var(--color-gold); color: var(--color-ink); }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-gold); border-radius: 3px; }
