@@ -3,7 +3,7 @@ session_start();
 
 $script = $_SERVER['SCRIPT_NAME'] ?? '';
 $base   = '';
-if (preg_match('#(/SurArte_Andino)#i', $script, $m)) {
+if (preg_match('#(/SurArte_Andino1)#i', $script, $m)) {
     $base = $m[1];
 }
 

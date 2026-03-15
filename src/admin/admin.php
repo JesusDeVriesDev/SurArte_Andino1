@@ -71,22 +71,15 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
       <h1 class="page-h1">Administración <em>SurArte</em></h1>
       <p class="page-lead">Gestiona usuarios, artistas, eventos y productos de la plataforma.</p>
     </div>
-    <div class="admin-hero-actions">
-      <a href="<?= $base ?>/src/admin/usuarios.php"  class="btn btn-gold" style="font-size:.7rem">Gestionar usuarios</a>
-      <a href="<?= $base ?>/src/admin/artistas.php"  class="btn btn-gold" style="font-size:.7rem">Gestionar artistas</a>
-      <a href="<?= $base ?>/src/admin/eventos.php"   class="btn btn-gold" style="font-size:.7rem">Gestionar eventos</a>
-      <a href="<?= $base ?>/src/admin/dashboard.php" class="btn btn-gold" style="font-size:.7rem">Ver Estadísticas</a>
-    </div>
   </div>
 
   <div class="stats-grid">
     <?php
     $statsData = [
-      ['👤', $stats['usuarios'],   'Usuarios',             'badge-sky',   $base.'/src/admin/usuarios.php'],
-      ['🎨', $stats['artistas'],   'Artistas',             'badge-gold',  $base.'/src/admin/artistas.php'],
-      ['📅', $stats['eventos'],    'Eventos activos',      'badge-clay',  $base.'/src/eventos/eventos.php'],
-      ['🛍️', $stats['productos'],  'Productos activos',    'badge-green', $base.'/src/tienda/tienda.php'],
-      ['⏳', $stats['pendientes'], 'Artistas por verificar','badge-muted', $base.'/src/admin/artistas.php'],
+      ['👤 Gestionar Usuarios', $stats['usuarios'],   'Usuarios',             'badge-sky',   $base.'/src/admin/usuarios.php'],
+      ['🎨 Gestionar Artistas', $stats['artistas'],   'Artistas',             'badge-gold',  $base.'/src/admin/artistas.php'],
+      ['📅 Gestionar Eventos', $stats['eventos'],    'Eventos activos',      'badge-clay',  $base.'/src/admin/eventos.php'],
+      ['🛍️ Gestionar Productos', $stats['productos'],  'Productos activos',    'badge-green', $base.'/src/admin/proximamente.php'],
       ['🏔️', 'Nariño',            'Colombia · Sur Andino','badge-sky',   $base.'/src/inicio/inicio.php'],
     ];
     foreach ($statsData as [$ic, $n, $lbl, $badge, $href]):

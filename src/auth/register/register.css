@@ -1,6 +1,3 @@
-/* ============================================
-   login.css — Auth layout (login & register)
-   ============================================ */
 
 .auth-body {
   overflow: auto;
@@ -8,7 +5,6 @@
   min-height: 100vh;
 }
 
-/* Sobreescribir layout.css que bloquea el scroll */
 html, body { height: auto !important; overflow: auto !important; }
 
 .auth-layout {
@@ -17,7 +13,6 @@ html, body { height: auto !important; overflow: auto !important; }
   min-height: 100vh;
 }
 
-/* ── Panel izquierdo visual ── */
 .auth-visual {
   background: var(--color-ink);
   background-image:
@@ -31,7 +26,6 @@ html, body { height: auto !important; overflow: auto !important; }
   overflow: hidden;
 }
 
-/* Rejilla decorativa */
 .auth-visual::after {
   content: '';
   position: absolute; inset: 0;
@@ -67,12 +61,10 @@ html, body { height: auto !important; overflow: auto !important; }
   letter-spacing: .02em;
 }
 
-/* Línea decorativa dorada bajo el título */
 .auth-visual-content .gold-line {
   margin: 1.4rem 0 1.6rem;
 }
 
-/* ── Panel derecho formulario ── */
 .auth-panel {
   background: var(--color-cream);
   display: flex;
@@ -86,7 +78,6 @@ html, body { height: auto !important; overflow: auto !important; }
   max-width: 400px;
 }
 
-/* Header del form */
 .auth-header { margin-bottom: 2rem; }
 
 .auth-title {
@@ -103,7 +94,6 @@ html, body { height: auto !important; overflow: auto !important; }
   color: var(--color-clay);
 }
 
-/* ── Inputs — asegurar fondo crema sobre panel crema ── */
 .auth-panel .input {
   background: var(--color-white);
   border: 1.5px solid var(--color-cream-dk);
@@ -118,7 +108,6 @@ html, body { height: auto !important; overflow: auto !important; }
   box-shadow: 0 0 0 3px rgba(239,68,68,.1);
 }
 
-/* ── Meta row (recordarme + olvidé) ── */
 .auth-meta {
   display: flex;
   justify-content: space-between;
@@ -154,7 +143,6 @@ html, body { height: auto !important; overflow: auto !important; }
 }
 .auth-link:hover { opacity: .7; text-decoration: underline; }
 
-/* ── Divider "o continúa con" ── */
 .auth-divider {
   text-align: center;
   position: relative;
@@ -177,11 +165,9 @@ html, body { height: auto !important; overflow: auto !important; }
 .auth-divider::before { left: 0; }
 .auth-divider::after  { right: 0; }
 
-/* ── Social ── */
 .social-auth-row { display: flex; gap: .75rem; }
 .social-auth-btn { flex: 1; justify-content: center; }
 
-/* ── Error del servidor ── */
 .auth-error {
   background: #fef2f2;
   border: 1.5px solid #fca5a5;
@@ -198,7 +184,6 @@ html, body { height: auto !important; overflow: auto !important; }
 }
 .auth-error svg { flex-shrink: 0; margin-top: 2px; }
 
-/* ── Footer ── */
 .auth-footer-txt {
   text-align: center;
   font-family: var(--ff-body);
@@ -208,18 +193,12 @@ html, body { height: auto !important; overflow: auto !important; }
   margin-top: 1.6rem;
 }
 
-/* ── Responsive ── */
 @media (max-width: 860px) {
   .auth-layout { grid-template-columns: 1fr; }
   .auth-visual  { display: none; }
   .auth-panel   { padding: 48px 28px; }
 }
 
-/* ============================================
-   register.css — Extiende login.css
-   ============================================ */
-
-/* ── Perks en panel visual ── */
 .auth-perks {
   list-style: none; padding: 0;
   margin: 2rem 0 0;
@@ -240,7 +219,6 @@ html, body { height: auto !important; overflow: auto !important; }
   margin-top: .15rem;
 }
 
-/* ── Input con botón de ojo ── */
 .input-pass-wrap { position: relative; }
 .input-pass-wrap .input { padding-right: 2.8rem; }
 
@@ -254,7 +232,6 @@ html, body { height: auto !important; overflow: auto !important; }
 }
 .pass-toggle:hover { color: var(--color-ink); }
 
-/* ── Barra de fortaleza ── */
 .strength-bar {
   height: 3px;
   background: var(--color-cream-dk);
@@ -287,14 +264,12 @@ html, body { height: auto !important; overflow: auto !important; }
 .strength-label.s3 { color: var(--color-warning); }
 .strength-label.s4 { color: var(--color-success); }
 
-/* ── Términos ── */
 .terms-row {
   display: flex;
   flex-direction: column;
   gap: .3rem;
 }
 
-/* ── Responsive ── */
 @media (max-width: 860px) {
   .auth-layout { grid-template-columns: 1fr; }
   .auth-visual  { display: none; }
