@@ -16,14 +16,14 @@ unset($_SESSION['evento_ok'], $_SESSION['evento_error']);
 
 try {
     $eventos = db()->query(
-        "SELECT e.id, e.titulo, e.categoria, e.lugar, e.municipio,
-                e.fecha_inicio, e.fecha_fin, e.precio, e.aforo,
-                e.imagen_url, e.activo, e.creado_en,
-                u.nombre AS organizador_nombre
-         FROM eventos e
-         LEFT JOIN usuarios u ON e.organizador_id = u.id
-         ORDER BY e.fecha_inicio DESC"
-    )->fetchAll();
+    "SELECT e.id, e.titulo, e.descripcion, e.categoria, e.lugar, e.municipio,
+            e.fecha_inicio, e.fecha_fin, e.precio, e.aforo,
+            e.imagen_url, e.activo, e.creado_en,
+            u.nombre AS organizador_nombre
+     FROM eventos e
+     LEFT JOIN usuarios u ON e.organizador_id = u.id
+     ORDER BY e.fecha_inicio DESC"
+)->fetchAll();
 } catch (PDOException $e) {
     $eventos = [];
     $dbError = $e->getMessage();
