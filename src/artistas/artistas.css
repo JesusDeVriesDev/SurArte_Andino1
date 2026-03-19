@@ -1,3 +1,27 @@
+.admin-toolbar .admin-search {
+  flex: 1;
+  min-width: 200px;
+  background: var(--white) !important;
+  border: 1.5px solid var(--cream-dk) !important;
+  border-radius: var(--r) !important;
+  padding: 9px 14px !important;
+  font-family: var(--ff-b);
+  font-size: .9rem;
+  color: rgba(0, 0, 0, 0.1);
+  transition: border-color .22s, box-shadow .22s;
+  box-shadow: none;
+}
+
+.admin-toolbar .admin-search:focus {
+  outline: none;
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.admin-toolbar .admin-search::placeholder {
+  color: rgb(0, 0, 0);
+}
+
 .art-hero {
   position: relative;
   display: flex;
@@ -17,12 +41,51 @@
   pointer-events: none;
 }
 
-.art-filters {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 32px;
+.art-select-wrap {
+  position: relative;
+  flex-shrink: 0;
 }
+.art-select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  padding: 9px 36px 9px 14px !important;
+  border: 1.5px solid var(--cream-dk) !important;
+  border-radius: var(--r) !important;
+  background: var(--white) !important;
+  font-family: var(--ff-b);
+  font-size: .9rem;
+  color: var(--ink);
+  cursor: pointer;
+  outline: none;
+  transition: border-color .22s, box-shadow .22s;
+  min-width: 240px;
+  width: auto;
+}
+.art-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,146,42,.1);
+}
+.art-select-arrow {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: .75rem;
+  color: rgba(26,18,8,.4);
+  pointer-events: none;
+}
+
+.art-no-results {
+  display: none;
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 0;
+  color: rgba(26,18,8,.38);
+  font-family: var(--ff-b);
+  font-size: .95rem;
+}
+
+
 
 .art-grid {
   display: grid;
@@ -121,8 +184,8 @@
 
 .art-card-cta {
   font-family: var(--ff-m);
-  font-size: .55rem;
-  letter-spacing: .1em;
+  font-size: .60rem;
+  letter-spacing: 3.em;
   text-transform: uppercase;
   color: var(--sky);
   margin-top: auto;

@@ -50,11 +50,8 @@ $emojis = ['🎨','🏺','🪇','🧵','🖼️','💃','📷','🎭','🌺','�
 
   <div class="art-hero">
     <div class="art-hero-bg"></div>
-    <div>
-      <div class="eyebrow">Comunidad creativa</div>
-      <h1 class="page-h1">Artistas <em>verificados</em></h1>
-      <p class="page-lead">Descubre los creadores del sur de Colombia. Cada perfil ha sido revisado y verificado por nuestro equipo.</p>
-    </div>
+      <h1 class="page-h1" style="font-size:clamp(2.8rem,6vw,5rem);color:#0d0902">Artistas <em>verificados</em></h1>
+      <p class="page-lead" style="font-size:clamp(1.05rem,1.6vw,1.25rem);font-weight:400;color:#1A1208;max-width:520px">Descubre los creadores del sur de Colombia. Cada perfil ha sido revisado y verificado por nuestro equipo.</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:52px">
       <?php if ($user && $user['rol'] === 'artista'): ?>
         <a href="<?= $base ?>/src/artistas/perfil/index.php" class="btn btn-gold" style="font-size:.7rem">Mi perfil →</a>
@@ -64,16 +61,30 @@ $emojis = ['🎨','🏺','🪇','🧵','🖼️','💃','📷','🎭','🌺','�
     </div>
   </div>
 
-  <?php if (!empty($disciplinas)): ?>
-  <div class="art-filters">
-    <button class="filter-pill active" data-disc="all">🎭 Todos (<?= count($artistas) ?>)</button>
-    <?php foreach ($disciplinas as $d): ?>
-    <button class="filter-pill" data-disc="<?= htmlspecialchars($d) ?>">
-      <?= $catIcons[$d] ?? '✨' ?> <?= htmlspecialchars($d) ?>
-    </button>
-    <?php endforeach; ?>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:32px">
+    <input
+      id="artistaSearch"
+      type="text"
+      placeholder="Buscar por nombre, disciplina, descripción o municipio…"
+      style="flex:1;min-width:200px;background:#FFFEF9;border:1.5px solid #EDE4D0;border-radius:8px;padding:10px 16px;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.05rem;font-weight:700;color:#FFFEF9;transition:border-color .22s,box-shadow .22s;outline:none;box-shadow:none"
+      onfocus="this.style.borderColor='rgb(201, 146, 42)';this.style.boxShadow='0 0 0 3px rgba(201,146,42,.1)'"
+      onblur="this.style.borderColor='#EDE4D0';this.style.boxShadow='none'"
+    />
+    <div style="position:relative;flex-shrink:0">
+      <select
+        id="disciplinaSelect"
+        style="-webkit-appearance:none;appearance:none;padding:10px 36px 10px 16px;border:1.5px solid #EDE4D0;border-radius:8px;background:#FFFEF9;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.05rem;font-weight:700;color:#1A1208;cursor:pointer;outline:none;transition:border-color .22s,box-shadow .22s;min-width:240px;box-shadow:none"
+        onfocus="this.style.borderColor='rgb(201, 146, 42)';this.style.boxShadow='0 0 0 3px rgba(201,146,42,.1)'"
+        onblur="this.style.borderColor='#EDE4D0';this.style.boxShadow='none'"
+      >
+        <option value="all">🎭 Todas las disciplinas (<?= count($artistas) ?>)</option>
+        <?php foreach ($disciplinas as $d): ?>
+          <option value="<?= htmlspecialchars($d) ?>"><?= ($catIcons[$d] ?? '✨') . ' ' . htmlspecialchars($d) ?></option>
+        <?php endforeach; ?>
+      </select>
+      <span style="position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:.75rem;color:rgba(26,18,8,.4);pointer-events:none">▾</span>
+    </div>
   </div>
-  <?php endif; ?>
 
   <?php if (!empty($artistas)): ?>
   <div class="art-grid" id="artistasGrid">
@@ -88,17 +99,17 @@ $emojis = ['🎨','🏺','🪇','🧵','🖼️','💃','📷','🎭','🌺','�
         <div class="art-card-verif" title="Artista verificado">✓</div>
       </div>
       <div class="art-card-body">
-        <div class="art-card-name"><?= htmlspecialchars($a['nombre']) ?></div>
+        <div class="art-card-name" style="font-size:1.15rem;color:#0d0902;font-weight:800"><?= htmlspecialchars($a['nombre']) ?></div>
         <?php if ($a['disciplina']): ?>
-          <span class="badge badge-sky" style="margin-bottom:6px;display:inline-block"><?= htmlspecialchars($a['disciplina']) ?></span>
+          <span class="badge badge-sky" style="margin-bottom:6px;display:inline-block;font-size:.65rem"><?= htmlspecialchars($a['disciplina']) ?></span>
         <?php endif; ?>
         <?php if ($a['municipio']): ?>
-          <div class="art-card-loc">📍 <?= htmlspecialchars($a['municipio']) ?></div>
+          <div class="art-card-loc" style="font-size:.65rem;color:#000000;font-weight:600">📍 <?= htmlspecialchars($a['municipio']) ?></div>
         <?php endif; ?>
         <?php if ($a['bio']): ?>
-          <div class="art-card-bio"><?= htmlspecialchars(mb_substr($a['bio'], 0, 80)) ?>…</div>
+          <div class="art-card-bio" style="font-size:.92rem;font-weight:400;color:#000000"><?= htmlspecialchars(mb_substr($a['bio'], 0, 80)) ?>…</div>
         <?php endif; ?>
-        <div class="art-card-cta">Ver perfil →</div>
+        <div class="art-card-cta" style="font-weight:1000">Ver perfil →</div>
       </div>
     </a>
     <?php endforeach; ?>
@@ -132,6 +143,47 @@ $emojis = ['🎨','🏺','🪇','🧵','🖼️','💃','📷','🎭','🌺','�
   <?php endif; ?>
 
 </main>
-<script src="<?= $base ?>/src/artistas/artistas.js"></script>
+<script>
+(function () {
+  var searchInput = document.getElementById('artistaSearch');
+  var selectDisc  = document.getElementById('disciplinaSelect');
+  var cards       = document.querySelectorAll('.art-card');
+  var grid        = document.getElementById('artistasGrid');
+
+  if (!searchInput && !selectDisc) return;
+
+  function normalize(str) {
+    return (str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  function filterCards() {
+    var q    = normalize(searchInput ? searchInput.value : '');
+    var disc = selectDisc ? selectDisc.value : 'all';
+    var visible = 0;
+
+    cards.forEach(function(card) {
+      var txt      = normalize(card.textContent);
+      var cardDisc = card.getAttribute('data-disc') || '';
+      var matchQ   = !q || txt.indexOf(q) !== -1;
+      var matchD   = disc === 'all' || cardDisc === disc;
+      card.style.display = (matchQ && matchD) ? '' : 'none';
+      if (matchQ && matchD) visible++;
+    });
+
+    var noRes = grid ? grid.querySelector('.art-no-results') : null;
+    if (!noRes && grid) {
+      noRes = document.createElement('div');
+      noRes.className = 'art-no-results';
+      noRes.style.cssText = 'display:none;grid-column:1/-1;text-align:center;padding:60px 0;color:rgba(26,18,8,.38);font-size:.95rem';
+      noRes.textContent = 'No se encontraron artistas con ese criterio.';
+      grid.appendChild(noRes);
+    }
+    if (noRes) noRes.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  if (searchInput) searchInput.addEventListener('input',  filterCards);
+  if (selectDisc)  selectDisc.addEventListener('change', filterCards);
+}());
+</script>
 </body>
 </html>

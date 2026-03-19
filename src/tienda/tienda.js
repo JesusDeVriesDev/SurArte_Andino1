@@ -1,16 +1,5 @@
 const BASE = '<?= $base ?>';
 
-document.querySelectorAll('.cat-pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-    const cat = pill.dataset.cat;
-    document.querySelectorAll('.product-card').forEach(card => {
-      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
-    });
-  });
-});
-
 function toggleCarrito() {
   const panel = document.getElementById('carritoPanel');
   if (!panel) return;

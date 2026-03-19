@@ -60,14 +60,15 @@
   align-items: center;
   gap: 8px;
   font-family: var(--ff-m);
-  font-size: .6rem;
-  letter-spacing: .22em;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--gold);
   background: rgba(201,146,42,.09);
   border: 1px solid rgba(201,146,42,.22);
   border-radius: 9999px;
-  padding: 6px 16px;
+  padding: 7px 18px;
   margin-bottom: 28px;
 }
 .prox-dot {
@@ -83,9 +84,9 @@
 
 .coming-title {
   font-family: var(--ff-d);
-  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-size: clamp(2.8rem, 6vw, 5rem);
   font-weight: 900;
-  color: var(--ink);
+  color: #0d0902;
   line-height: .95;
   letter-spacing: -.03em;
   margin-bottom: 20px;
@@ -104,9 +105,9 @@
 
 .coming-desc {
   font-family: var(--ff-b);
-  font-size: clamp(.95rem, 1.3vw, 1.08rem);
-  font-weight: 300;
-  color: rgba(26,18,8,.48);
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  font-weight: 400;
+  color: #1A1208;
   max-width: 500px;
   line-height: 1.85;
   margin: 0 auto 40px;
@@ -144,24 +145,24 @@
   border-color: rgba(201,146,42,.2);
 }
 .feature-card:hover::before { opacity: 1; }
+
 .feature-icon {
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   margin-bottom: 10px;
 }
 .feature-title {
   font-family: var(--ff-d);
-  font-size: .9rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 5px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0d0902;
+  margin-bottom: 8px;
 }
 .feature-text {
-  font-family: var(--ff-m);
-  font-size: .52rem;
-  letter-spacing: .07em;
-  color: rgba(26,18,8,.38);
-  line-height: 1.6;
-  text-transform: uppercase;
+  font-family: var(--ff-b);
+  font-size: 1rem;
+  font-weight: 400;
+  color: #2a1e0e;
+  line-height: 1.65;
 }
 
 .notify-row {

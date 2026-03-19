@@ -26,32 +26,32 @@ require_once '../_layout/head.php';
       Estamos<br><em>construyendo</em><br>algo grande
     </h1>
     <div class="gold-line-center"></div>
-    <p class="coming-desc">
-      La sección de Comunidad está en pleno desarrollo. Pronto tendrás un espacio para conectar con artistas, 
+    <p class="coming-desc" style="font-size:clamp(1.05rem,1.6vw,1.25rem);font-weight:700;color:#1A1208">
+      La sección de Comunidad está en pleno desarrollo. Pronto tendrás un espacio para conectar con artistas,
       compartir tu trabajo, participar en foros y hacer parte activa de la escena cultural de Nariño.
     </p>
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">💬</div>
-        <div class="feature-title">Foros</div>
-        <div class="feature-text">Debates y conversaciones entre artistas y aficionados</div>
+        <div class="feature-title" style="font-size:1.1rem;font-weight:800;color:#0d0902">Foros</div>
+        <div class="feature-text" style="font-size:0.85rem;font-weight:400;color:#2a1e0e;line-height:1.65;text-transform:none">Debates y conversaciones entre artistas y aficionados</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🖼️</div>
-        <div class="feature-title">Portafolios</div>
-        <div class="feature-text">Comparte y descubre obras de la comunidad creativa</div>
+        <div class="feature-title" style="font-size:1.1rem;font-weight:800;color:#0d0902">Portafolios</div>
+        <div class="feature-text" style="font-size:0.85rem;font-weight:400;color:#2a1e0e;line-height:1.65;text-transform:none">Comparte y descubre obras de la comunidad creativa</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🌐</div>
-        <div class="feature-title">Red de contactos</div>
-        <div class="feature-text">Conecta con otros creadores de la región andina</div>
+        <div class="feature-title" style="font-size:1.1rem;font-weight:800;color:#0d0902">Red de contactos</div>
+        <div class="feature-text" style="font-size:0.85rem;font-weight:400;color:#2a1e0e;line-height:1.65;text-transform:none">Conecta con otros creadores de la región andina</div>
       </div>
     </div>
     <div class="notify-row">
-      <a href="../artistas/artistas.php" class="btn btn-gold" style="font-size:.7rem">
+      <a href="../artistas/artistas.php" class="btn btn-gold" style="font-size:.85rem">
         Ver artistas →
       </a>
-      <a href="../eventos/eventos.php" class="btn btn-outline" style="font-size:.7rem">
+      <a href="../eventos/eventos.php" class="btn btn-outline" style="font-size:.85rem">
         Explorar eventos
       </a>
     </div>
