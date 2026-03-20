@@ -40,11 +40,17 @@ try {
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="<?= $base ?>/src/artistas/artistas.css"/>
+  <style>
+    .field-label{font-size:.82rem!important;font-weight:700!important;color:#1A1208!important;opacity:1!important}
+    .field-input,.field-select,.field-textarea{font-size:1.05rem!important;font-weight:400!important;color:#0d0902!important;background:#FFFEF9!important;border:1.5px solid #EDE4D0!important}
+    .field-input::placeholder,.field-textarea::placeholder{color:rgba(26,18,8,.55)!important}
+    .field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(201,146,42,.1)!important;outline:none!important}
+  </style>
 </head>
 <main>
   <div style="max-width:600px;margin:0 auto;padding-top:48px">
-    <a href="index.php" style="font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,18,8,.38);text-decoration:none">← Mis productos</a>
-    <h1 class="page-h1" style="margin:16px 0 8px">Editar <em>producto</em></h1>
+    <a href="index.php" style="font-family:var(--ff-m);font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3d2b10;text-decoration:none">← Mis productos</a>
+    <h1 class="page-h1" style="margin:16px 0 8px;color:#0d0902">Editar <em>producto</em></h1>
     <?php if (isset($prod)): ?>
     <div class="form-card" style="max-width:100%">
       <form method="POST" action="guardar.php">
@@ -94,7 +100,7 @@ try {
       <form method="POST" action="guardar.php" style="margin-top:20px;border-top:1px solid var(--cream-dk);padding-top:20px" onsubmit="return confirm('¿Eliminar este producto?')">
         <input type="hidden" name="accion" value="eliminar"/>
         <input type="hidden" name="producto_id" value="<?= $prod['id'] ?>"/>
-        <button type="submit" class="btn btn-danger" style="font-size:.68rem">Eliminar producto</button>
+        <button type="submit" class="btn btn-danger" style="font-size:.82rem">Eliminar producto</button>
       </form>
     </div>
     <?php endif; ?>

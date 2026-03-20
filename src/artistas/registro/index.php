@@ -27,13 +27,19 @@ $disciplinas = ['Barniz de Pasto','Cerámica','Pintura','Escultura','Música And
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="<?= $base ?>/src/artistas/artistas.css"/>
+  <style>
+    .field-label{font-size:.82rem!important;font-weight:700!important;color:#1A1208!important;opacity:1!important}
+    .field-input,.field-select,.field-textarea{font-size:1.05rem!important;font-weight:400!important;color:#0d0902!important;background:#FFFEF9!important;border:1.5px solid #EDE4D0!important}
+    .field-input::placeholder,.field-textarea::placeholder{color:rgba(26,18,8,.55)!important}
+    .field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(201,146,42,.1)!important;outline:none!important}
+  </style>
 </head>
 <main>
   <div style="padding-top:48px;max-width:640px;margin:0 auto">
-    <a href="<?= $base ?>/src/artistas/artistas.php" style="font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,18,8,.38);text-decoration:none">← Artistas</a>
-    <div class="eyebrow" style="margin-top:16px">Comunidad creativa</div>
-    <h1 class="page-h1" style="margin-bottom:8px">Registro de <em>artista</em></h1>
-    <p class="page-lead" style="margin-bottom:32px">Completa tu perfil artístico. Nuestro equipo lo revisará y verificará pronto.</p>
+    <a href="<?= $base ?>/src/artistas/artistas.php" style="font-family:var(--ff-m);font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3d2b10;text-decoration:none">← Artistas</a>
+    <div class="eyebrow" style="margin-top:16px;font-size:.75rem;font-weight:700;color:#5a2d0c">Comunidad creativa</div>
+    <h1 class="page-h1" style="margin-bottom:8px;color:#0d0902">Registro de <em>artista</em></h1>
+    <p class="page-lead" style="margin-bottom:32px;font-size:clamp(1.05rem,1.5vw,1.2rem);font-weight:400;color:#1A1208">Completa tu perfil artístico. Nuestro equipo lo revisará y verificará pronto.</p>
 
     <?php if ($error): ?>
     <div class="alert alert-err" style="margin-bottom:20px">❌ <?= htmlspecialchars($error) ?></div>

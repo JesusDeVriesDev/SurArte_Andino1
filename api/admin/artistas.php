@@ -20,6 +20,11 @@ switch ($accion) {
     case 'eliminar':
         $id = $body['id'] ?? '';
         if (!$id) jsonErr('ID inválido');
+        db()->prepare(
+            "UPDATE usuarios SET rol = 'visitante'
+             WHERE id = (SELECT usuario_id FROM artistas WHERE id = ?::uuid)
+               AND rol NOT IN ('admin','organizador')"
+        )->execute([$id]);
         db()->prepare("DELETE FROM artistas WHERE id = ?::uuid")->execute([$id]);
         jsonOk(['id' => $id]);
 

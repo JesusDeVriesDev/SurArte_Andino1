@@ -108,41 +108,41 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
 
     <div>
       <?php if ($artista['verificado']): ?>
-        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:999px;padding:4px 12px;font-family:var(--ff-m);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:#16a34a;margin-bottom:16px">
-          <span style="width:5px;height:5px;border-radius:50%;background:#22c55e;display:inline-block"></span> Artista verificado
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:999px;padding:5px 14px;font-family:var(--ff-m);font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#16a34a;margin-bottom:16px">
+          <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block"></span> Artista verificado
         </div>
       <?php endif; ?>
-      <h1 class="perfil-nombre"><?= htmlspecialchars($artista['nombre']) ?></h1>
+      <h1 class="perfil-nombre" style="color:#0d0902;font-size:clamp(2.2rem,4.5vw,3.8rem)"><?= htmlspecialchars($artista['nombre']) ?></h1>
 
       <div class="perfil-meta">
         <?php if ($artista['disciplina']): ?>
-          <span class="badge badge-gold"><?= $catIcons[$artista['disciplina']] ?? '🎨' ?> <?= htmlspecialchars($artista['disciplina']) ?></span>
+          <span class="badge badge-gold" style="font-size:.72rem;font-weight:600;padding:5px 14px"><?= $catIcons[$artista['disciplina']] ?? '🎨' ?> <?= htmlspecialchars($artista['disciplina']) ?></span>
         <?php endif; ?>
         <?php if ($artista['municipio']): ?>
-          <span class="badge badge-muted">📍 <?= htmlspecialchars($artista['municipio']) ?></span>
+          <span class="badge badge-muted" style="font-size:.72rem;font-weight:600;padding:5px 14px;color:#3d2b10">📍 <?= htmlspecialchars($artista['municipio']) ?></span>
         <?php endif; ?>
       </div>
 
       <?php if ($artista['bio']): ?>
-        <p class="perfil-bio"><?= nl2br(htmlspecialchars($artista['bio'])) ?></p>
+        <p class="perfil-bio" style="font-size:clamp(1.05rem,1.6vw,1.2rem);font-weight:400;color:#1A1208;line-height:1.85"><?= nl2br(htmlspecialchars($artista['bio'])) ?></p>
       <?php endif; ?>
 
       <div class="perfil-social">
         <?php if (!empty($artista['instagram'])): ?>
-          <a href="https://instagram.com/<?= htmlspecialchars(ltrim($artista['instagram'],'@')) ?>" target="_blank">📷 Instagram</a>
+          <a href="https://instagram.com/<?= htmlspecialchars(ltrim($artista['instagram'],'@')) ?>" target="_blank" style="font-size:.78rem;font-weight:600;color:#3d2b10">📷 Instagram</a>
         <?php endif; ?>
         <?php if (!empty($artista['facebook'])): ?>
-          <a href="<?= htmlspecialchars($artista['facebook']) ?>" target="_blank">📘 Facebook</a>
+          <a href="<?= htmlspecialchars($artista['facebook']) ?>" target="_blank" style="font-size:.78rem;font-weight:600;color:#3d2b10">📘 Facebook</a>
         <?php endif; ?>
         <?php if (!empty($artista['website'])): ?>
-          <a href="<?= htmlspecialchars($artista['website']) ?>" target="_blank">🌐 Sitio web</a>
+          <a href="<?= htmlspecialchars($artista['website']) ?>" target="_blank" style="font-size:.78rem;font-weight:600;color:#3d2b10">🌐 Sitio web</a>
         <?php endif; ?>
       </div>
 
       <?php if ($esDueno): ?>
       <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
-        <a href="<?= $base ?>/src/artistas/editar/index.php" class="btn btn-gold" style="font-size:.7rem">✏️ Editar perfil</a>
-        <a href="<?= $base ?>/src/artistas/productos/index.php" class="btn btn-outline" style="font-size:.7rem">🛍️ Mis productos</a>
+        <a href="<?= $base ?>/src/artistas/editar/index.php" class="btn btn-gold" style="font-size:.82rem">✏️ Editar perfil</a>
+        <a href="<?= $base ?>/src/artistas/productos/index.php" class="btn btn-outline" style="font-size:.82rem">🛍️ Mis productos</a>
       </div>
       <?php endif; ?>
     </div>
@@ -151,8 +151,8 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
   <div class="perfil-section">
     <div class="perfil-section-header">
       <div>
-        <div class="eyebrow" style="margin-bottom:4px">Tienda personal</div>
-        <h2 class="perfil-section-title">Obras y <em style="color:var(--clay)">productos</em></h2>
+        <div class="eyebrow" style="margin-bottom:4px;font-size:.75rem;font-weight:700;color:#5a2d0c">Tienda personal</div>
+        <h2 class="perfil-section-title" style="font-size:clamp(1.6rem,3vw,2.4rem);color:#0d0902">Obras y <em style="color:var(--clay)">productos</em></h2>
       </div>
       <?php if ($esDueno): ?>
         <a href="<?= $base ?>/src/artistas/productos/index.php" class="btn btn-gold" style="font-size:.68rem">+ Agregar producto</a>
@@ -203,7 +203,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
     <?php else: ?>
     <div class="empty" style="padding:60px 20px">
       <div class="empty-icon">🛍️</div>
-      <p>Este artista aún no tiene productos publicados.</p>
+      <p style='font-size:1.5rem;font-weight:500;color:#000000'>Este artista aún no tiene productos publicados.</p>
       <?php if ($esDueno): ?>
         <a href="<?= $base ?>/src/artistas/productos/index.php" class="btn btn-gold" style="margin-top:12px">Publicar mi primer producto →</a>
       <?php endif; ?>

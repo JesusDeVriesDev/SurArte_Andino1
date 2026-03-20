@@ -55,6 +55,56 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="<?= $base ?>/src/admin/admin.css"/>
+  <style>
+    /* ── Textos más grandes y oscuros ── */
+    .eyebrow{font-size:.78rem!important;font-weight:700!important;color:#5a2d0c!important}
+    .page-h1{color:#0d0902!important}
+    .page-lead{font-size:clamp(1.05rem,1.5vw,1.2rem)!important;font-weight:400!important;color:#1A1208!important}
+    .panel-title{font-size:1.05rem!important;font-weight:800!important;color:#0d0902!important}
+    .panel-link{font-size:.72rem!important;font-weight:600!important}
+    .eyebrow{font-size:.78rem!important;font-weight:700!important;color:#5a2d0c!important}
+    /* Breadcrumb */
+    .stat-lbl{font-size:.65rem!important;font-weight:600!important;color:#3d2b10!important}
+    .stat-num{font-size:1.9rem!important;color:#0d0902!important}
+    /* Tabla */
+    .admin-table th{font-size:.65rem!important;font-weight:700!important;color:#3d2b10!important}
+    .admin-table td{font-size:.95rem!important;color:#1A1208!important}
+    /* user-row */
+    .user-name{font-size:.95rem!important;font-weight:700!important;color:#0d0902!important}
+    .user-email{font-size:.65rem!important;color:#3d2b10!important}
+    .user-date{font-size:.65rem!important;color:#3d2b10!important}
+    /* pedido-row / bar chart */
+    .pedido-cliente{font-size:.95rem!important;font-weight:700!important;color:#0d0902!important}
+    .pedido-fecha{font-size:.68rem!important;color:#3d2b10!important}
+    .pedido-total{font-size:.95rem!important;color:#0d0902!important}
+    .bar-label{font-size:.65rem!important;color:#3d2b10!important;font-weight:600!important}
+    .bar-count{font-size:.88rem!important;font-weight:700!important;color:#0d0902!important}
+    /* kpi-card */
+    .kpi-label{font-size:.65rem!important;font-weight:600!important;color:#3d2b10!important}
+    .kpi-value{font-size:2.1rem!important;color:#0d0902!important}
+    .kpi-sub{font-size:.62rem!important;color:#3d2b10!important}
+    /* cat-item */
+    .cat-info-label{font-size:.62rem!important;font-weight:600!important;color:#3d2b10!important}
+    .cat-info-count{font-size:1.05rem!important;font-weight:700!important;color:#0d0902!important}
+    /* qa-label */
+    .qa-label{font-size:.65rem!important;font-weight:600!important;color:#3d2b10!important}
+    /* filter-pill */
+    .filter-pill{font-size:.68rem!important;font-weight:600!important}
+    /* admin-search */
+    .admin-search,.admin-search::placeholder{font-size:.95rem!important}
+    .admin-search::placeholder{color:rgba(26,18,8,.45)!important}
+    /* campos de formulario (eventos) */
+    .field-label{font-size:.82rem!important;font-weight:700!important;color:#1A1208!important;opacity:1!important}
+    .field-input,.field-select,.field-textarea{font-size:1.05rem!important;font-weight:400!important;color:#0d0902!important;background:#FFFEF9!important;border:1.5px solid #EDE4D0!important}
+    .field-input::placeholder,.field-textarea::placeholder{color:rgba(26,18,8,.55)!important}
+    /* proximamente */
+    .prox-title{color:#0d0902!important}
+    .prox-desc{font-size:clamp(1rem,1.3vw,1.1rem)!important;font-weight:400!important;color:#1A1208!important}
+    .prox-feat-title{font-size:.95rem!important;font-weight:800!important;color:#0d0902!important}
+    .prox-feat-text{font-size:.65rem!important;color:#3d2b10!important}
+    .prox-badge{font-size:.72rem!important;font-weight:700!important}
+    .prox-progress-label{font-size:.62rem!important;color:#3d2b10!important}
+  </style>
 </head>
 <main>
 
@@ -120,7 +170,7 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
           <?php endforeach; ?>
         </div>
         <?php else: ?>
-        <div class="empty"><div class="empty-icon">👤</div><p>Sin usuarios registrados aún.</p></div>
+        <div class="empty"><div class="empty-icon">👤</div><p style='font-size:1.5rem;font-weight:500;color:#000000'>Sin usuarios registrados aún.</p></div>
         <?php endif; ?>
       </div>
       <div class="admin-panel" style="margin-top:24px">
@@ -145,7 +195,7 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
           <?php endforeach; ?>
         </div>
         <?php else: ?>
-        <div class="empty"><div class="empty-icon">✅</div><p>Todos los artistas están verificados.</p></div>
+        <div class="empty"><div class="empty-icon">✅</div><p style='font-size:1.5rem;font-weight:500;color:#000000'>Todos los artistas están verificados.</p></div>
         <?php endif; ?>
       </div>
 
@@ -183,7 +233,7 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
           <div class="pedido-row">
             <div class="pedido-id" style="min-width:42px;text-align:center">
               <div style="font-family:var(--ff-d);font-size:.95rem;font-weight:900;color:var(--gold);line-height:1"><?= $dt->format('d') ?></div>
-              <div style="font-family:var(--ff-m);font-size:.42rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,18,8,.38)"><?= $dt->format('M') ?></div>
+              <div style="font-family:var(--ff-m);font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#3d2b10"><?= $dt->format('M') ?></div>
             </div>
             <div class="pedido-info">
               <div class="pedido-cliente"><?= htmlspecialchars($ev['titulo']) ?></div>
@@ -194,7 +244,7 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
           <?php endforeach; ?>
         </div>
         <?php else: ?>
-        <div class="empty"><div class="empty-icon">📅</div><p>No hay eventos registrados aún.</p></div>
+        <div class="empty"><div class="empty-icon">📅</div><p style='font-size:1.5rem;font-weight:500;color:#000000'>No hay eventos registrados aún.</p></div>
         <?php endif; ?>
       </div>
       <div class="admin-panel" style="margin-top:24px">
@@ -220,7 +270,7 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
           <?php endforeach; ?>
         </div>
         <?php else: ?>
-        <div class="empty"><div class="empty-icon">🛍️</div><p>No hay productos registrados aún.</p></div>
+        <div class="empty"><div class="empty-icon">🛍️</div><p style='font-size:1.5rem;font-weight:500;color:#000000'>No hay productos registrados aún.</p></div>
         <?php endif; ?>
       </div>
 

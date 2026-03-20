@@ -66,7 +66,7 @@ $emojis = ['🎨','🏺','🪇','🧵','🖼️','💃','📷','🎭','🌺','�
       id="artistaSearch"
       type="text"
       placeholder="Buscar por nombre, disciplina, descripción o municipio…"
-      style="flex:1;min-width:200px;background:#FFFEF9;border:1.5px solid #EDE4D0;border-radius:8px;padding:10px 16px;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.05rem;font-weight:700;color:#FFFEF9;transition:border-color .22s,box-shadow .22s;outline:none;box-shadow:none"
+      style="flex:1;min-width:200px;background:#FFFEF9;border:1.5px solid #000000;border-radius:8px;padding:10px 16px;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.05rem;font-weight:700;color:#000000;transition:border-color .22s,box-shadow .22s;outline:none;box-shadow:none"
       onfocus="this.style.borderColor='rgb(201, 146, 42)';this.style.boxShadow='0 0 0 3px rgba(201,146,42,.1)'"
       onblur="this.style.borderColor='#EDE4D0';this.style.boxShadow='none'"
     />

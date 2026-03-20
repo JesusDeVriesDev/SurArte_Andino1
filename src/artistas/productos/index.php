@@ -51,6 +51,12 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="<?= $base ?>/src/artistas/artistas.css"/>
   <link rel="stylesheet" href="<?= $base ?>/src/tienda/tienda.css"/>
+  <style>
+    .field-label{font-size:.82rem!important;font-weight:700!important;color:#1A1208!important;opacity:1!important}
+    .field-input,.field-select,.field-textarea{font-size:1.05rem!important;font-weight:400!important;color:#0d0902!important;background:#FFFEF9!important;border:1.5px solid #EDE4D0!important}
+    .field-input::placeholder,.field-textarea::placeholder{color:rgba(26,18,8,.55)!important}
+    .field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--gold)!important;box-shadow:0 0 0 3px rgba(201,146,42,.1)!important;outline:none!important}
+  </style>
 </head>
 <main>
 
@@ -58,11 +64,10 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
   <?php if ($error): ?><div class="alert alert-err" style="margin-bottom:20px">❌ <?= htmlspecialchars($error) ?></div><?php endif; ?>
 
   <div style="display:flex;align-items:center;gap:12px;padding-top:40px;margin-bottom:8px">
-    <a href="<?= $base ?>/src/artistas/perfil/index.php" style="font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,18,8,.38);text-decoration:none">← Mi perfil</a>
+    <a href="<?= $base ?>/src/artistas/perfil/index.php" style="font-family:var(--ff-m);font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3d2b10;text-decoration:none">← Mi perfil</a>
   </div>
-  <div class="eyebrow">Tienda personal</div>
-  <h1 class="page-h1" style="margin-bottom:8px">Mis <em>productos</em></h1>
-  <p class="page-lead" style="margin-bottom:28px">Gestiona los productos que ofreces en SurArte Andino.</p>
+  <h1 class="page-h1" style="margin-bottom:8px;color:#0d0902">Mis <em>productos</em></h1>
+  <p class="page-lead" style="margin-bottom:28px;font-size:clamp(1.05rem,1.5vw,1.2rem);font-weight:400;color:#1A1208">Gestiona los productos que ofreces en SurArte Andino.</p>
 
   <?php if (!$artista['verificado']): ?>
   <div class="alert alert-info" style="margin-bottom:28px">
@@ -73,7 +78,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
   <!-- Formulario nuevo producto -->
   <div class="admin-panel" style="margin-bottom:36px">
     <div class="panel-header">
-      <div><div class="eyebrow" style="margin-bottom:4px">Publicar</div><h2 class="panel-title">Nuevo producto</h2></div>
+      <div><div class="eyebrow" style="margin-bottom:4px;font-size:.75rem;font-weight:700;color:#5a2d0c">Publicar</div><h2 class="panel-title" style="font-size:1.1rem;font-weight:800;color:#0d0902">Nuevo producto</h2></div>
     </div>
     <div style="padding:20px 22px">
       <form method="POST" action="guardar.php">
@@ -114,12 +119,12 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
           <label class="field-label">Imagen (URL)</label>
           <input class="field-input" type="url" name="imagen_url" placeholder="https://…"/>
         </div>
-        <button type="submit" class="btn btn-gold" style="font-size:.7rem">Publicar producto →</button>
+        <button type="submit" class="btn btn-gold" style="font-size:.85rem">Publicar producto →</button>
       </form>
     </div>
   </div>
 
-  <div class="eyebrow" style="margin-bottom:16px">Mis productos (<?= count($productos) ?>)</div>
+  <div class="eyebrow" style="margin-bottom:16px;font-size:.75rem;font-weight:700;color:#5a2d0c">Mis productos (<?= count($productos) ?>)</div>
   <?php if (!empty($productos)): ?>
   <div class="products-grid">
     <?php foreach ($productos as $p):
@@ -156,3 +161,4 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
 </main>
 </body>
 </html>
+
