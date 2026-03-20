@@ -46,7 +46,22 @@ if (!empty($_SESSION['user_id'])) {
   <div class="auth-visual">
     <div class="auth-visual-content">
       <div class="auth-brand">SurArte<br><em>Andino</em></div>
+      <div class="gold-line"></div>
       <p class="auth-visual-sub">Arte y cultura del sur de Colombia</p>
+      <ul class="auth-perks">
+        <li class="auth-perk">
+          <span class="perk-icon">◈</span>
+          <span>Accede a obra exclusiva de artistas locales</span>
+        </li>
+        <li class="auth-perk">
+          <span class="perk-icon">◈</span>
+          <span>Guarda tus piezas favoritas</span>
+        </li>
+        <li class="auth-perk">
+          <span class="perk-icon">◈</span>
+          <span>Conecta con la comunidad andina</span>
+        </li>
+      </ul>
     </div>
   </div>
 
@@ -81,8 +96,9 @@ if (!empty($_SESSION['user_id'])) {
           <div style="position:relative">
             <input class="input" type="password" id="password" name="password"
                    placeholder="••••••••" required/>
-            <button type="button" id="togglePass"
-                    style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:inherit;padding:0">
+            <button type="button" id="togglePass" class="pass-toggle"
+                    style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(26,18,8,.65);padding:0;transition:color .2s;display:flex;align-items:center"
+                    onmouseover="this.style.color='#0d0902'" onmouseout="this.style.color='rgba(26,18,8,.65)'">
               <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

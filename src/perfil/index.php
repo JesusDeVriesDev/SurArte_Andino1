@@ -49,10 +49,9 @@ $estadoIcons  = ['pagado'=>'✅','enviado'=>'🚚','entregado'=>'📦','cancelad
     <?= mb_strtoupper(mb_substr($uData['nombre'] ?? 'U', 0, 1)) ?>
     </div>
     <div>
-      <h1 class="page-h1" style="font-size:clamp(1.6rem,3vw,2.4rem);margin:0"><?= htmlspecialchars($uData['nombre'] ?? '') ?></h1>
-      <h1 class="page-h1" style="font-size:clamp(1.6rem,3vw,2.4rem);margin:0">-------------</h1>
-      <div style="font-family:var(--ff-m);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,18,8,.38);margin-top:4px">
-        <?= htmlspecialchars($uData['email'] ?? '') ?> · <span class="badge badge-sky" style="font-size:.48rem"><?= $uData['rol'] ?? 'visitante' ?></span>
+      <h1 class="page-h1" style="font-size:clamp(1.6rem,3vw,2.4rem);margin:0;color:#0d0902"><?= htmlspecialchars($uData['nombre'] ?? '') ?></h1>
+      <div style="font-family:var(--ff-m);font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#3d2b10;margin-top:6px">
+        <?= htmlspecialchars($uData['email'] ?? '') ?> · <span class="badge badge-sky" style="font-size:.58rem"><?= $uData['rol'] ?? 'visitante' ?></span>
       </div>
     </div>
     <?php if ($user['rol'] === 'artista'): ?>
@@ -67,7 +66,7 @@ $estadoIcons  = ['pagado'=>'✅','enviado'=>'🚚','entregado'=>'📦','cancelad
 
   <div id="tab-compras">
     <?php if (!empty($pedidos)): ?>
-      <div style="margin-bottom:18px;font-family:var(--ff-m);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(26,18,8,.38)">
+      <div style="margin-bottom:18px;font-family:var(--ff-m);font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3d2b10">
         <?= count($pedidos) ?> pedido<?= count($pedidos)!==1?'s':'' ?> realizados
       </div>
       <?php foreach ($pedidos as $ped): ?>
@@ -108,8 +107,8 @@ $estadoIcons  = ['pagado'=>'✅','enviado'=>'🚚','entregado'=>'📦','cancelad
               <?php endif; ?>
             </div>
             <div style="flex:1">
-              <div style="font-family:var(--ff-d);font-size:.88rem;font-weight:700;color:var(--ink)"><?= htmlspecialchars($it['nombre_snap']) ?></div>
-              <div style="font-family:var(--ff-m);font-size:.55rem;color:rgba(26,18,8,.38);letter-spacing:.05em">x<?= $it['cantidad'] ?> · $<?= number_format((float)$it['precio_snap'],0,',','.') ?> c/u</div>
+              <div style="font-family:var(--ff-d);font-size:.95rem;font-weight:800;color:#0d0902"><?= htmlspecialchars($it['nombre_snap']) ?></div>
+              <div style="font-family:var(--ff-m);font-size:.65rem;font-weight:500;color:#3d2b10;letter-spacing:.04em;margin-top:2px">x<?= $it['cantidad'] ?> · $<?= number_format((float)$it['precio_snap'],0,',','.') ?> c/u</div>
             </div>
             <div style="font-family:var(--ff-d);font-size:.95rem;font-weight:700;color:var(--clay)">$<?= number_format($it['precio_snap']*$it['cantidad'],0,',','.') ?></div>
           </div>
@@ -124,13 +123,12 @@ $estadoIcons  = ['pagado'=>'✅','enviado'=>'🚚','entregado'=>'📦','cancelad
     <?php else: ?>
     <div class="empty" style="padding:60px 20px">
       <div class="empty-icon">🛍️</div>
-      <p>Aún no has realizado ninguna compra.</p>
+      <p style='font-size:1.5rem;font-weight:500;color:#000000'>Aún no has realizado ninguna compra.</p>
       <a href="<?= $base ?>/src/tienda/tienda.php" class="btn btn-gold" style="margin-top:16px">Explorar tienda →</a>
     </div>
     <?php endif; ?>
   </div>
 
-  <!-- Tab: Mi cuenta -->
   <div id="tab-cuenta" style="display:none">
     <div class="form-card" style="max-width:560px">
       <?php $ok = $_SESSION['perfil_ok'] ?? null; $err = $_SESSION['perfil_err'] ?? null;

@@ -21,7 +21,9 @@ $NAV = [
     ['id'=>'comunidad', 'icon'=>'🤝', 'label'=>'Comunidad', 'href'=>$base.'/src/comunidad/comunidad.php'],
 ];
 
+// Estado verificado del artista — leído de $_SESSION para no hacer consulta en cada página
 $artistaVerificado = $_SESSION['artista_verificado'] ?? false;
+// Contador de carrito — leído de $_SESSION, actualizado por JS tras cada acción
 $navCartCount = (int)($_SESSION['carrito_count'] ?? 0);
 ?>
 <!DOCTYPE html>
@@ -78,6 +80,7 @@ img{max-width:100%;display:block}
 }
 .tb-logo span{font-style:italic;color:rgba(201,146,42,.65)}
 
+/* Nav con scroll horizontal en desktop cuando no cabe */
 .tb-nav{
   display:flex;align-items:center;gap:2px;
   flex:1;min-width:0;
@@ -92,7 +95,7 @@ img{max-width:100%;display:block}
   font-family:var(--ff-m);font-size:.75rem;
   font-weight:500;
   letter-spacing:.08em;text-transform:uppercase;
-  color:rgba(250,245,236,.6);
+  color:rgba(250,245,236,.85);
   white-space:nowrap;flex-shrink:0;
   transition:color var(--dur),background var(--dur);
 }
@@ -110,13 +113,13 @@ img{max-width:100%;display:block}
   padding-left:16px;
 }
 .tb-user{
-  font-family:var(--ff-m);font-size:.72rem;
-  letter-spacing:.06em;color:rgba(250,245,236,.5);
+  font-family:var(--ff-m);font-size:.76rem;
+  letter-spacing:.06em;color:rgba(250,245,236,.85);
   white-space:nowrap;padding:0 6px;
 }
 .btn-sm{
   padding:7px 13px;border-radius:var(--r);
-  font-family:var(--ff-m);font-size:.68rem;
+  font-family:var(--ff-m);font-size:.71rem;
   font-weight:500;
   letter-spacing:.07em;text-transform:uppercase;
   transition:all .22s;white-space:nowrap;
@@ -127,7 +130,7 @@ img{max-width:100%;display:block}
 }
 .btn-gold-sm:hover{background:var(--gold-lt);transform:translateY(-1px)}
 .btn-ghost-sm{
-  color:rgba(250,245,236,.7);
+  color:rgba(250,245,236,.85);
   border:none;
   background:rgba(250,245,236,.06);
 }
@@ -138,10 +141,10 @@ img{max-width:100%;display:block}
 .tb-cart-btn{
   position:relative;display:inline-flex;align-items:center;gap:6px;
   padding:7px 13px;border-radius:var(--r);
-  font-family:var(--ff-m);font-size:.68rem;
+  font-family:var(--ff-m);font-size:.71rem;
   font-weight:500;
   letter-spacing:.07em;text-transform:uppercase;
-  color:rgba(250,245,236,.7);
+  color:rgba(250,245,236,.85);
   border:none;
   background:rgba(250,245,236,.06);
   transition:all .22s;text-decoration:none;white-space:nowrap;
@@ -155,6 +158,7 @@ img{max-width:100%;display:block}
   font-family:var(--ff-m);
 }
 
+/* Burger — aparece en ≤1024px para cubrir zoom 150% en desktop */
 .tb-burger{display:none;flex-direction:column;gap:5px;padding:8px;flex-shrink:0}
 .tb-burger span{width:22px;height:2px;background:var(--cream);border-radius:2px;transition:transform .3s,opacity .3s}
 .tb-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
@@ -271,8 +275,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
       <?php endif; ?>
 
       <a class="btn-sm btn-ghost-sm" href="<?= $base ?>/src/perfil/index.php">👤 Cuenta</a>
+
+      <!-- Carrito -->
       <a class="tb-cart-btn" href="<?= $base ?>/src/tienda/tienda.php" id="navCartLink">
-        🛒
+        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
         <?php if ($navCartCount > 0): ?>
           <span class="tb-cart-badge" id="navCartBadge"><?= $navCartCount ?></span>
         <?php else: ?>
@@ -328,6 +337,7 @@ function toast(msg, type = 'ok') {
   _tt = setTimeout(() => document.getElementById('toast').classList.remove('show'), 3800);
 }
 
+// Actualizar badge del carrito en navbar desde JS
 function updateNavCartBadge(count) {
   const badge = document.getElementById('navCartBadge');
   if (!badge) return;

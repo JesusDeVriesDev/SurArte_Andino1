@@ -134,10 +134,10 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
             <?php endif; ?>
             <div class="product-name" style="font-size:1.05rem;font-weight:800;color:#0d0902"><?= htmlspecialchars($p['nombre']) ?></div>
             <?php if (!empty($p['descripcion'])): ?>
-              <div class="product-desc" style="font-size:.88rem;font-weight:400;color:#2a1e0e"><?= htmlspecialchars($p['descripcion']) ?></div>
+              <div class="product-desc" style="font-size:.95rem;font-weight:400;color:#2a1e0e"><?= htmlspecialchars($p['descripcion']) ?></div>
             <?php endif; ?>
             <?php if (!empty($p['categoria'])): ?>
-              <span class="badge badge-gold" style="margin-bottom:10px;align-self:flex-start">
+              <span class="badge badge-gold" style="font-size:.88rem;margin-bottom:10px;align-self:flex-start">
                 <?= $catIcons[$p['categoria']] ?? '✨' ?> <?= htmlspecialchars($catLabels[$p['categoria']] ?? ucfirst($p['categoria'])) ?>
               </span>
             <?php endif; ?>
