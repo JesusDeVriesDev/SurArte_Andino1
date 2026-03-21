@@ -26,7 +26,7 @@ document.querySelectorAll('.btn-add[data-id]').forEach(btn => {
     const precio = parseFloat(btn.dataset.precio);
     btn.disabled = true; btn.textContent = '…';
     try {
-      const r = await fetch((window.APP_BASE||'') + '/api/carrito/add.php', {
+      const r = await fetch(BASE + '/api/carrito/add.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ producto_id: id, cantidad: 1 })
@@ -84,7 +84,7 @@ async function cambiarCantidad(prodId, delta) {
   const nueva  = actual + delta;
   if (nueva < 1) { quitarDelCarrito(prodId); return; }
   try {
-    const r = await fetch((window.APP_BASE||'') + '/api/carrito/update.php', {
+    const r = await fetch(BASE + '/api/carrito/update.php', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ producto_id: prodId, cantidad: nueva })
     });
@@ -101,7 +101,7 @@ async function cambiarCantidad(prodId, delta) {
 
 async function quitarDelCarrito(prodId) {
   try {
-    const r = await fetch((window.APP_BASE||'') + '/api/carrito/remove.php', {
+    const r = await fetch(BASE + '/api/carrito/remove.php', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ producto_id: prodId })
     });
@@ -121,7 +121,7 @@ async function pagar() {
   const btn = document.getElementById('btnPagar');
   btn.disabled = true; btn.textContent = '⏳ Procesando…';
   try {
-    const r = await fetch((window.APP_BASE||'') + '/api/carrito/checkout.php', {
+    const r = await fetch(BASE + '/api/carrito/checkout.php', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({})
     });

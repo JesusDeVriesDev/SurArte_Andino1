@@ -1,12 +1,23 @@
 <?php
-$pageTitle = 'Producto';
-$pageId    = 'tienda';
-require_once '../_layout/head.php';
+ob_start();
 require_once '../../config/db.php';
+
+// Calcular $base antes del head.php (que también lo calcula, pero lo necesitamos para redirects)
+$script = $_SERVER['SCRIPT_NAME'] ?? '';
+$base   = '';
+if (preg_match('#(/SurArte_Andino[^/]*)#i', $script, $m)) {
+    $base = $m[1];
+}
+
+if (session_status() === PHP_SESSION_NONE) session_start();
+$user = isset($_SESSION['user_id'])
+    ? ['nombre' => $_SESSION['nombre'] ?? '', 'rol' => $_SESSION['rol'] ?? '']
+    : null;
 
 $prodId = $_GET['id'] ?? null;
 if (!$prodId) { header('Location: ' . $base . '/src/tienda/tienda.php'); exit; }
 
+$p = null; $comentarios = [];
 try {
     $stmt = db()->prepare(
         "SELECT p.*, a.nombre AS artista_nombre, a.municipio AS artista_municipio,
@@ -30,8 +41,6 @@ try {
     $comentarios->execute([$prodId]);
     $comentarios = $comentarios->fetchAll();
 
-    $pageTitle = htmlspecialchars($p['nombre']) . ' — SurArte Andino';
-
 } catch (PDOException $e) {
     $dbError = $e->getMessage();
     $p = null; $comentarios = [];
@@ -40,6 +49,11 @@ try {
 $catIcons  = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨'];
 $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danza'=>'Danza','literatura'=>'Literatura','otro'=>'Otro'];
 $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge-gold','usuario'=>'badge-muted','visitante'=>'badge-muted'];
+
+$pageTitle = $p ? htmlspecialchars($p['nombre']) . ' — SurArte Andino' : 'Producto';
+$pageId    = 'tienda';
+ob_end_clean();
+require_once '../_layout/head.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -61,7 +75,6 @@ $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
     .prod-artista-avatar img{width:100%;height:100%;object-fit:cover}
     .prod-artista-name{font-family:var(--ff-d);font-size:1.1rem;font-weight:700;color:#0d0902}
     .prod-artista-loc{font-family:var(--ff-m);font-size:.8rem;font-weight:500;color:#3d2b10;margin-top:2px}
-    /* Comentarios */
     .comments-section{margin-top:60px;border-top:1px solid var(--cream-dk);padding-top:40px}
     .comments-title{font-family:var(--ff-d);font-size:clamp(1.4rem,2.5vw,2rem);font-weight:900;color:#0d0902;margin-bottom:8px}
     .comments-count{font-family:var(--ff-m);font-size:1.1rem;font-weight:500;color:#3d2b10;margin-bottom:28px}
@@ -99,7 +112,6 @@ $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
 
   <?php if ($p): ?>
   <div class="prod-layout">
-    <!-- Imagen -->
     <div class="prod-img-wrap">
       <?php if (!empty($p['imagen_url']) && str_starts_with($p['imagen_url'],'http') && !str_contains($p['imagen_url'],'example.com')): ?>
         <img src="<?= htmlspecialchars($p['imagen_url']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>"/>
@@ -108,7 +120,6 @@ $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
       <?php endif; ?>
     </div>
 
-    <!-- Info -->
     <div>
       <div class="prod-eyebrow">
         <?= $catIcons[$p['categoria']] ?? '✨' ?>
@@ -124,8 +135,7 @@ $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
       <?php endif; ?>
 
       <div class="prod-meta-row">
-        <?php
-        $stock = (int)$p['stock'];
+        <?php $stock = (int)$p['stock'];
         if ($stock > 3): ?>
           <span class="badge badge-green" style="font-size:.85rem">✓ En stock (<?= $stock ?>)</span>
         <?php elseif ($stock > 0): ?>
@@ -137,7 +147,6 @@ $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
         <span style="font-size:.95rem"> <?= count($comentarios) ?> comentario<?= count($comentarios) !== 1 ? 's' : '' ?></span>
       </div>
 
-      <!-- Artista -->
       <a href="<?= $base ?>/src/artistas/perfil/index.php?id=<?= urlencode($p['artista_id']) ?>" class="prod-artista">
         <div class="prod-artista-avatar">
           <?php if (!empty($p['artista_foto'])): ?>
@@ -155,7 +164,6 @@ $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
         <span style="margin-left:auto;font-family:var(--ff-m);font-size:.8rem;color:var(--sky)">Ver perfil →</span>
       </a>
 
-      <!-- Botón agregar al carrito -->
       <?php if ($user): ?>
         <?php if ($stock > 0): ?>
           <button class="btn btn-gold" style="width:100%;justify-content:center;font-size:.88rem"
@@ -178,7 +186,6 @@ $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
     </div>
   </div>
 
-  <!-- ── Comentarios ── -->
   <div class="comments-section">
     <h2 class="comments-title">Comentarios</h2>
     <div class="comments-count"><?= count($comentarios) ?> comentario<?= count($comentarios) !== 1 ? 's' : '' ?> sobre este producto</div>
@@ -212,7 +219,7 @@ $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
                 <?php if ($c['editado_en']): ?> · <em>editado</em><?php endif; ?>
               </div>
             </div>
-            <?php if ($user && $user['id'] === $c['usuario_id']): ?>
+            <?php if ($user && isset($_SESSION['user_id']) && $_SESSION['user_id'] === $c['usuario_id']): ?>
             <div class="comment-actions" style="margin-top:0;margin-left:auto">
               <button class="comment-btn comment-btn-edit" onclick="editarComentario('<?= $c['id'] ?>')">Editar</button>
               <button class="comment-btn comment-btn-del" onclick="eliminarComentario('<?= $c['id'] ?>')">Eliminar</button>
@@ -234,16 +241,14 @@ $rolBadge  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
 
 </main>
 <script>
-const PROD_ID    = '<?= htmlspecialchars($prodId) ?>';
-const BASE       = window.APP_BASE || '';
-const USER_ID    = '<?= $user ? htmlspecialchars($_SESSION['user_id']) : '' ?>';
+const PROD_ID = '<?= htmlspecialchars($prodId) ?>';
+const BASE    = '<?= $base ?>';
+const USER_ID = '<?= ($user && isset($_SESSION['user_id'])) ? htmlspecialchars($_SESSION['user_id']) : '' ?>';
 
-// ── Agregar al carrito ──
 const btnAgregar = document.getElementById('btnAgregar');
 if (btnAgregar) {
   btnAgregar.addEventListener('click', async () => {
-    const id     = btnAgregar.dataset.id;
-    const nombre = btnAgregar.dataset.nombre;
+    const id = btnAgregar.dataset.id, nombre = btnAgregar.dataset.nombre;
     btnAgregar.disabled = true; btnAgregar.textContent = '⏳ Agregando…';
     try {
       const r = await fetch(BASE + '/api/carrito/add.php', {
@@ -260,79 +265,76 @@ if (btnAgregar) {
         toast(d.message || 'Error al agregar', 'err');
         btnAgregar.disabled = false; btnAgregar.textContent = '🛒 Agregar al carrito';
       }
-    } catch(e) {
-      toast('Error de conexión', 'err');
-      btnAgregar.disabled = false; btnAgregar.textContent = '🛒 Agregar al carrito';
-    }
+    } catch(e) { toast('Error de conexión', 'err'); btnAgregar.disabled = false; btnAgregar.textContent = '🛒 Agregar al carrito'; }
   });
 }
 
-// ── Comentarios ──
 async function enviarComentario() {
   const ta = document.getElementById('nuevoComentario');
   const texto = ta.value.trim();
   if (!texto) { toast('Escribe un comentario primero', 'warn'); return; }
-
   try {
     const r = await fetch(BASE + '/api/carrito/comentarios.php', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ accion:'crear', producto_id: PROD_ID, texto })
     });
     const d = await r.json();
-    if (d.success) {
-      ta.value = '';
-      agregarComentarioDOM(d.data);
-      toast('Comentario publicado', 'ok');
-    } else { toast(d.message || 'Error', 'err'); }
+    if (d.success) { ta.value = ''; agregarComentarioDOM(d.data); toast('Comentario publicado', 'ok'); }
+    else { toast(d.message || 'Error', 'err'); }
   } catch(e) { toast('Error de conexión', 'err'); }
 }
 
 function agregarComentarioDOM(c) {
   const empty = document.getElementById('emptyComments');
   if (empty) empty.remove();
-
   const esMio = c.usuario_id === USER_ID;
-  const html = `
-    <div class="comment-card" id="comment-${c.id}">
-      <div class="comment-header">
-        <div class="comment-avatar">${c.nombre.charAt(0).toUpperCase()}</div>
-        <div>
-          <div class="comment-author">${c.nombre}
-            <span class="badge badge-muted" style="font-size:.55rem;margin-left:6px;vertical-align:middle">${c.rol}</span>
-          </div>
-          <div class="comment-meta">Ahora mismo</div>
+  const html = `<div class="comment-card" id="comment-${c.id}">
+    <div class="comment-header">
+      <div class="comment-avatar">${c.nombre.charAt(0).toUpperCase()}</div>
+      <div>
+        <div class="comment-author">${c.nombre}
+          <span class="badge badge-muted" style="font-size:.55rem;margin-left:6px;vertical-align:middle">${c.rol}</span>
         </div>
-        ${esMio ? `<div class="comment-actions" style="margin-top:0;margin-left:auto">
-          <button class="comment-btn comment-btn-edit" onclick="editarComentario('${c.id}')">Editar</button>
-          <button class="comment-btn comment-btn-del" onclick="eliminarComentario('${c.id}')">Eliminar</button>
-        </div>` : ''}
+        <div class="comment-meta">Ahora mismo</div>
       </div>
-      <div class="comment-text" id="texto-${c.id}">${c.texto}</div>
-    </div>`;
+      ${esMio ? `<div class="comment-actions" style="margin-top:0;margin-left:auto">
+        <button class="comment-btn comment-btn-edit" onclick="editarComentario('${c.id}')">Editar</button>
+        <button class="comment-btn comment-btn-del" onclick="eliminarComentario('${c.id}')">Eliminar</button>
+      </div>` : ''}
+    </div>
+    <div class="comment-text" id="texto-${c.id}">${c.texto}</div>
+  </div>`;
   document.getElementById('comentariosList').insertAdjacentHTML('afterbegin', html);
 }
 
 function editarComentario(id) {
   const textoEl = document.getElementById('texto-' + id);
-  const textoActual = textoEl.textContent;
-  textoEl.innerHTML = `
-    <textarea class="comment-text-edit" id="edit-${id}">${textoActual}</textarea>
+  
+  // Si ya está en modo edición, no hacer nada
+  if (textoEl.querySelector('textarea')) return;
+
+  const textoActual = textoEl.textContent.trim();
+  textoEl.dataset.original = textoActual;
+
+  textoEl.innerHTML = `<textarea class="comment-text-edit" id="edit-${id}"></textarea>
     <div class="comment-actions">
-      <button class="comment-btn comment-btn-cancel" onclick="cancelarEdicion('${id}', \`${textoActual.replace(/`/g,"'")}\`)">Cancelar</button>
+      <button class="comment-btn comment-btn-cancel" onclick="cancelarEdicion('${id}')">Cancelar</button>
       <button class="comment-btn comment-btn-save" onclick="guardarEdicion('${id}')">Guardar</button>
     </div>`;
+
+  document.getElementById('edit-' + id).value = textoActual;
 }
 
-function cancelarEdicion(id, textoOriginal) {
+function cancelarEdicion(id) {
   const textoEl = document.getElementById('texto-' + id);
-  textoEl.innerHTML = textoOriginal;
+  // Restaurar como texto plano, no como HTML
+  textoEl.textContent = textoEl.dataset.original;
+  delete textoEl.dataset.original;
 }
 
 async function guardarEdicion(id) {
-  const ta = document.getElementById('edit-' + id);
-  const texto = ta.value.trim();
+  const texto = document.getElementById('edit-' + id).value.trim();
   if (!texto) { toast('El comentario no puede estar vacío', 'warn'); return; }
-
   try {
     const r = await fetch(BASE + '/api/carrito/comentarios.php', {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -341,7 +343,8 @@ async function guardarEdicion(id) {
     const d = await r.json();
     if (d.success) {
       const textoEl = document.getElementById('texto-' + id);
-      textoEl.innerHTML = d.data.texto;
+      textoEl.textContent = d.data.texto;
+      delete textoEl.dataset.original;
       toast('Comentario actualizado', 'ok');
     } else { toast(d.message || 'Error', 'err'); }
   } catch(e) { toast('Error de conexión', 'err'); }
@@ -355,10 +358,8 @@ async function eliminarComentario(id) {
       body: JSON.stringify({ accion:'eliminar', id })
     });
     const d = await r.json();
-    if (d.success) {
-      document.getElementById('comment-' + id)?.remove();
-      toast('Comentario eliminado', 'ok');
-    } else { toast(d.message || 'Error', 'err'); }
+    if (d.success) { document.getElementById('comment-' + id)?.remove(); toast('Comentario eliminado', 'ok'); }
+    else { toast(d.message || 'Error', 'err'); }
   } catch(e) { toast('Error de conexión', 'err'); }
 }
 </script>
