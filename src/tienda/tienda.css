@@ -12,10 +12,7 @@
       pointer-events: none;
     }
 
-    .categories-strip {
-      display: none; /* reemplazado por searchbar + select */
-    }
-
+    .categories-strip { display: none; }
     .cat-pill { display: none; }
 
     .products-grid {
@@ -253,7 +250,6 @@
   min-width: 0;
 }
 
-/* Cuando el carrito está abierto, reducir columnas para que no se aprieten */
 .tienda-layout:has(.carrito-panel.carrito-open) .products-grid {
   grid-template-columns: repeat(3, 1fr) !important;
 }

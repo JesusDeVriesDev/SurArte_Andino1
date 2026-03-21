@@ -124,3 +124,15 @@ INSERT INTO productos (artista_id, nombre, descripcion, categoria, precio, stock
 ((SELECT id FROM artistas WHERE nombre='Rosa Inés Muñoz' LIMIT 1),       'Disco Música Andina - Voces del Galeras','Álbum con música tradicional andina de Nariño.','musica',    30000,  10, NULL),
 ((SELECT id FROM artistas WHERE nombre='Rosa Inés Muñoz' LIMIT 1),       'Quena Andina artesanal',                 'Quena elaborada a mano por artesanos locales.',  'musica',    45000,  7, NULL)
 ON CONFLICT DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS producto_comentarios (
+    id          UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    producto_id UUID         NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
+    usuario_id  UUID         NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    texto       TEXT         NOT NULL CHECK (char_length(texto) BETWEEN 1 AND 1000),
+    creado_en   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    editado_en  TIMESTAMPTZ
+);
+ 
+CREATE INDEX IF NOT EXISTS idx_comentarios_producto ON producto_comentarios(producto_id);
+CREATE INDEX IF NOT EXISTS idx_comentarios_usuario  ON producto_comentarios(usuario_id);

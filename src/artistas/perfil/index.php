@@ -165,7 +165,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
         $stockBadge = $p['stock'] > 3 ? ['ok','En stock'] : ($p['stock'] > 0 ? ['low','Últimas '.$p['stock']] : ['out','Agotado']);
         $ic = $catIcons[$p['categoria']] ?? '🛍️';
       ?>
-      <div class="product-card" data-cat="<?= htmlspecialchars($p['categoria'] ?? '') ?>">
+      <div class="product-card" data-cat="<?= htmlspecialchars($p['categoria'] ?? '') ?>" style="cursor:pointer" onclick="window.location='<?= $base ?>/src/tienda/producto.php?id=<?= urlencode($p['id']) ?>'">
         <div class="product-img-wrap">
           <?php if (!empty($p['imagen_url']) && str_starts_with($p['imagen_url'],'http') && !str_contains($p['imagen_url'],'example.com')): ?>
             <img class="product-img-real" src="<?= htmlspecialchars($p['imagen_url']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>" loading="lazy">
@@ -187,13 +187,15 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
                 data-nombre="<?= htmlspecialchars($p['nombre']) ?>"
                 data-precio="<?= $p['precio'] ?>"
                 title="Agregar al carrito"
+                onclick="event.stopPropagation()"
                 <?= $p['stock'] == 0 ? 'disabled' : '' ?>>+</button>
             <?php elseif ($esDueno): ?>
-              <a href="<?= $base ?>/src/artistas/productos/editar.php?id=<?= urlencode($p['id']) ?>" class="btn-add" title="Editar" style="text-decoration:none;font-size:.75rem">✏️</a>
+              <a href="<?= $base ?>/src/artistas/productos/editar.php?id=<?= urlencode($p['id']) ?>" class="btn-add" title="Editar" style="text-decoration:none;font-size:.75rem" onclick="event.stopPropagation()">✏️</a>
             <?php else: ?>
               <a href="<?= $base ?>/src/auth/login/index.php"
                  style="width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:1rem;text-decoration:none"
-                 title="Inicia sesión para comprar">+</a>
+                 title="Inicia sesión para comprar"
+                 onclick="event.stopPropagation()">+</a>
             <?php endif; ?>
           </div>
         </div>
