@@ -1,4 +1,4 @@
-const BASE = window.APP_BASE || '';
+const BASE = window.APP_BASE || document.querySelector('meta[name="app-base"]')?.content || '';
 
 function toggleCarrito() {
   const panel = document.getElementById('carritoPanel');
