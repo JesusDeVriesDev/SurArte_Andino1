@@ -65,10 +65,11 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
     <div class="products-hero-bg"></div>
     <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px">
       <div>
-        <h1 style="font-family:var(--ff-d);font-size:clamp(2.8rem,6vw,5rem);font-weight:900;color:#0d0902;line-height:.95;letter-spacing:-.03em;margin-bottom:14px">
+        <div class="eyebrow">Arte hecho a mano</div>
+        <h1 style="font-family:var(--ff-d);font-size:clamp(2rem,4vw,3.4rem);font-weight:900;color:var(--ink);line-height:.95;letter-spacing:-.03em;margin-bottom:14px">
           Tienda <em style="font-style:italic;color:var(--clay)">artesanal</em>
         </h1>
-        <p style="font-family:var(--ff-b);font-size:clamp(1.05rem,1.6vw,1.25rem);font-weight:400;color:#1A1208;max-width:480px;line-height:1.75">
+        <p style="font-family:var(--ff-b);font-size:1rem;font-weight:300;color:rgba(26,18,8,.45);max-width:480px;line-height:1.75">
           Adquiere piezas únicas de artistas verificados de Nariño.
         </p>
       </div>
@@ -81,32 +82,18 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
       <?php endif; ?>
     </div>
 
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:24px">
-      <input
-        id="tiendaSearch"
-        type="text"
-        placeholder="Buscar productos por nombre o artista…"
-        style="flex:1;min-width:200px;background:#FFFEF9;border:1.5px solid #EDE4D0;border-radius:8px;padding:10px 16px;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.05rem;font-weight:500;color:#1A1208;transition:border-color .22s,box-shadow .22s;outline:none;box-shadow:none"
-        onfocus="this.style.borderColor='#C9922A';this.style.boxShadow='0 0 0 3px rgba(201,146,42,.1)'"
-        onblur="this.style.borderColor='#EDE4D0';this.style.boxShadow='none'"
-      />
-      <div style="position:relative;flex-shrink:0">
-        <select
-          id="categoriaSelectTienda"
-          style="-webkit-appearance:none;appearance:none;padding:10px 36px 10px 16px;border:1.5px solid #EDE4D0;border-radius:8px;background:#FFFEF9;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.05rem;font-weight:700;color:#1A1208;cursor:pointer;outline:none;transition:border-color .22s,box-shadow .22s;min-width:240px;box-shadow:none"
-          onfocus="this.style.borderColor='rgb(201, 146, 42)';this.style.boxShadow='0 0 0 3px rgba(201,146,42,.1)'"
-          onblur="this.style.borderColor='#EDE4D0';this.style.boxShadow='none'"
-        >
-          <option value="all">🛍️ Todas las categorías</option>
-          <?php foreach ($categorias as $cat): ?>
-            <option value="<?= htmlspecialchars($cat['categoria']) ?>">
-              <?= ($catIcons[$cat['categoria']] ?? '✨') . ' ' . ($catLabels[$cat['categoria']] ?? ucfirst($cat['categoria'])) . ' (' . $cat['total'] . ')' ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
-        <span style="position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:.75rem;color:rgba(26,18,8,.4);pointer-events:none">▾</span>
-      </div>
+    <?php if (!empty($categorias)): ?>
+    <div class="categories-strip">
+      <button class="cat-pill active" data-cat="all">🛍️ Todos</button>
+      <?php foreach ($categorias as $cat): ?>
+        <button class="cat-pill" data-cat="<?= htmlspecialchars($cat['categoria']) ?>">
+          <?= $catIcons[$cat['categoria']] ?? '✨' ?>
+          <?= htmlspecialchars($catLabels[$cat['categoria']] ?? ucfirst($cat['categoria'])) ?>
+          <span class="cat-count">(<?= $cat['total'] ?>)</span>
+        </button>
+      <?php endforeach; ?>
     </div>
+    <?php endif; ?>
   </div>
 
   <div class="tienda-layout" id="tiendaLayout">
@@ -117,7 +104,6 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
           $stockBadge = $p['stock'] > 3 ? ['ok','En stock'] : ($p['stock'] > 0 ? ['low','Últimas '.$p['stock']] : ['out','Agotado']);
           $catKey = $p['categoria'] ?? 'otro';
           $emoji  = $catIcons[$catKey] ?? '🛍️';
-          $nComentarios = (int)($p['num_comentarios'] ?? 0);
         ?>
         <div class="product-card" data-cat="<?= htmlspecialchars($catKey) ?>" style="cursor:pointer" onclick="window.location='<?= $base ?>/src/tienda/producto.php?id=<?= urlencode($p['id']) ?>'">
           <div class="product-img-wrap">
@@ -130,18 +116,18 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
           </div>
           <div class="product-body">
             <?php if (!empty($p['artista_nombre'])): ?>
-              <div class="product-artist" style="font-size:.78rem;font-weight:600;color:#3d2b10">
+              <div class="product-artist">
                 <a href="<?= $base ?>/src/artistas/perfil/index.php?id=<?= urlencode($p['artista_id']) ?>" style="color:inherit;text-decoration:none" onclick="event.stopPropagation()">
                   🎨 <?= htmlspecialchars($p['artista_nombre']) ?><?= $p['municipio'] ? ' · '.htmlspecialchars($p['municipio']) : '' ?>
                 </a>
               </div>
             <?php endif; ?>
-            <div class="product-name" style="font-size:1.05rem;font-weight:800;color:#0d0902"><?= htmlspecialchars($p['nombre']) ?></div>
+            <div class="product-name"><?= htmlspecialchars($p['nombre']) ?></div>
             <?php if (!empty($p['descripcion'])): ?>
-              <div class="product-desc" style="font-size:.95rem;font-weight:400;color:#2a1e0e"><?= htmlspecialchars($p['descripcion']) ?></div>
+              <div class="product-desc"><?= htmlspecialchars($p['descripcion']) ?></div>
             <?php endif; ?>
             <?php if (!empty($p['categoria'])): ?>
-              <span class="badge badge-gold" style="font-size:.88rem;margin-bottom:10px;align-self:flex-start">
+              <span class="badge badge-gold" style="margin-bottom:10px;align-self:flex-start">
                 <?= $catIcons[$p['categoria']] ?? '✨' ?> <?= htmlspecialchars($catLabels[$p['categoria']] ?? ucfirst($p['categoria'])) ?>
               </span>
             <?php endif; ?>
@@ -159,16 +145,18 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
                 <a href="<?= $base ?>/src/auth/login/index.php" style="width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:1rem;text-decoration:none" title="Inicia sesión para comprar" onclick="event.stopPropagation()">+</a>
               <?php endif; ?>
             </div>
-            <div style="font-family:var(--ff-m);font-size:.95rem;font-weight:500;color:#000000;margin-top:8px;padding-top:8px;border-top:1px solid rgba(26,18,8,.06)">
-              💬 <?= $nComentarios ?> comentario<?= $nComentarios !== 1 ? 's' : '' ?>
-            </div>
+            <?php if ((int)($p['num_comentarios'] ?? 0) > 0): ?>
+              <div style="font-family:var(--ff-m);font-size:.65rem;font-weight:500;color:rgba(26,18,8,.45);margin-top:8px;padding-top:8px;border-top:1px solid rgba(26,18,8,.06)">
+                💬 <?= (int)$p['num_comentarios'] ?> comentario<?= (int)$p['num_comentarios'] !== 1 ? 's' : '' ?>
+              </div>
+            <?php endif; ?>
           </div>
         </div>
         <?php endforeach; ?>
       <?php else: ?>
         <div class="empty-products">
           <div class="empty-icon">🛍️</div>
-          <p style='font-size:1.5rem;font-weight:500;color:#000000'>Aún no hay productos disponibles.</p>
+          <p>Aún no hay productos disponibles.</p>
         </div>
       <?php endif; ?>
     </div>
@@ -176,7 +164,7 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
     <?php if ($user): ?>
     <aside class="carrito-panel<?= $carritoCount > 0 ? ' carrito-open' : '' ?>" id="carritoPanel">
       <div class="carrito-header">
-        <h3 class="carrito-title">🛒 Mi carrito <span style="font-size:1.rem;font-weight:400;color:#000000">(<?= $carritoCount ?> items)</span></h3>
+        <h3 class="carrito-title">🛒 Mi carrito <span style="font-size:.7rem;font-weight:400;color:rgba(26,18,8,.38)">(<?= $carritoCount ?> items)</span></h3>
         <button onclick="toggleCarrito()" class="carrito-close-btn">✕</button>
       </div>
 
@@ -205,9 +193,9 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
           <?php endforeach; ?>
         <?php else: ?>
           <div class="carrito-empty" id="carritoEmpty">
-            <div style="font-size:2.5rem;color:#000000">🛒</div>
-            <p style="font-size:1.25rem;font-weight:700;color:#000000">Tu carrito está vacío</p>
-            <span style="font-size:1.rem;font-weight:700;color:#000000">Agrega productos con el botón +</span>
+            <div style="font-size:2.2rem">🛒</div>
+            <p>Tu carrito está vacío</p>
+            <span style="font-size:.75rem;color:rgba(26,18,8,.3)">Agrega productos con el botón +</span>
           </div>
         <?php endif; ?>
       </div>
@@ -221,7 +209,7 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
           onclick="pagar()">
           💳 Pagar ahora
         </button>
-        <div style="font-family:var(--ff-m);font-size:.48rem;letter-spacing:.07em;text-transform:uppercase;color:#000000;text-align:center;margin-top:8px">
+        <div style="font-family:var(--ff-m);font-size:.48rem;letter-spacing:.07em;text-transform:uppercase;color:rgba(26,18,8,.28);text-align:center;margin-top:8px">
           El stock se actualiza al confirmar
         </div>
       </div>
@@ -249,32 +237,7 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
 
 </main>
 
-<script>
-(function() {
-  var searchInput = document.getElementById('tiendaSearch');
-  var selectCat   = document.getElementById('categoriaSelectTienda');
-  var cards       = document.querySelectorAll('.product-card');
-
-  function normalize(str) {
-    return (str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  }
-
-  function filterProductos() {
-    var q   = normalize(searchInput ? searchInput.value : '');
-    var cat = selectCat ? selectCat.value : 'all';
-    cards.forEach(function(card) {
-      var txt     = normalize(card.textContent);
-      var cardCat = card.getAttribute('data-cat') || '';
-      var matchQ  = !q || txt.indexOf(q) !== -1;
-      var matchC  = cat === 'all' || cardCat === cat;
-      card.style.display = (matchQ && matchC) ? '' : 'none';
-    });
-  }
-
-  if (searchInput) searchInput.addEventListener('input',  filterProductos);
-  if (selectCat)   selectCat.addEventListener('change', filterProductos);
-}());
-</script>
+<script>window.APP_BASE = '<?= $base ?>';</script>
 <script src="<?= $base ?>/src/tienda/tienda.js"></script>
 </body>
 </html>

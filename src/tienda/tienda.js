@@ -1,4 +1,4 @@
-const BASE = '<?= $base ?>';
+const BASE = window.APP_BASE || '';
 
 function toggleCarrito() {
   const panel = document.getElementById('carritoPanel');
@@ -129,7 +129,7 @@ async function pagar() {
     if (d.success) {
       toast('¡Pago exitoso! Pedido #' + d.data.pedido_id.substring(0,8).toUpperCase(), 'ok');
       document.getElementById('carritoItems').innerHTML =
-        '<div class="carrito-empty" style="display:flex;flex-direction:column"><div style="font-size:2.2rem">✅</div><p>¡Pedido confirmado!</p><a href="' + (window.APP_BASE||'') + '/src/perfil/index.php" style="font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sky);text-decoration:none;margin-top:8px">Ver mis compras →</a></div>';
+        '<div class="carrito-empty" style="display:flex;flex-direction:column"><div style="font-size:2.2rem">✅</div><p>¡Pedido confirmado!</p><a href="' + BASE + '/src/perfil/index.php" style="font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sky);text-decoration:none;margin-top:8px">Ver mis compras →</a></div>';
       document.getElementById('carritoFooter').style.display = 'none';
       document.getElementById('cartCount').textContent = '0';
       const h3span = document.querySelector('.carrito-title span');
