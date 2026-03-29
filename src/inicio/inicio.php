@@ -20,6 +20,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="<?= $base ?>/_layout/global.css"/>
+  <link rel="stylesheet" href="inicio.css"/>
 </head>
 <main>
   <?php if (isset($dbError)): ?>
@@ -73,5 +74,6 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
 </div>
   </div>
 </main>
+<script src="inicio.js"></script>
 </body>
 </html>
