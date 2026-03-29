@@ -473,7 +473,68 @@
   margin-top: 2px;
 }
 
-@media (max-width: 1000px) {
+/* ── Carrito móvil: bottom sheet ── */
+@media (max-width: 768px) {
+  .tienda-layout { flex-direction: column; }
+
+  /* FAB flotante fijo en la esquina */
+  .cart-fab {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 601;
+    box-shadow: 0 4px 24px rgba(26,18,8,.35);
+    padding: 12px 28px;
+    font-size: .78rem;
+  }
+
+  /* Overlay oscuro detrás del bottom sheet */
+  .carrito-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,6,2,.55);
+    z-index: 599;
+    backdrop-filter: blur(2px);
+  }
+  .carrito-overlay.visible { display: block; }
+
+  /* Bottom sheet */
+  .carrito-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    max-height: 80vh;
+    z-index: 600;
+    box-shadow: 0 -8px 40px rgba(26,18,8,.28);
+    display: none;
+    /* handle visual */
+  }
+  .carrito-panel::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: rgba(26,18,8,.18);
+    border-radius: 2px;
+    margin: 10px auto 2px;
+    flex-shrink: 0;
+  }
+  .carrito-panel.carrito-open {
+    display: flex;
+  }
+  .carrito-items {
+    max-height: 45vh;
+  }
+}
+
+/* Desktop sin cambios */
+@media (min-width: 769px) and (max-width: 1000px) {
   .tienda-layout { flex-direction: column; }
   .carrito-panel {
     position: fixed;

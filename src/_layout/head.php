@@ -158,12 +158,31 @@ img{max-width:100%;display:block}
   font-family:var(--ff-m);
 }
 
-/* Burger — aparece en ≤1024px para cubrir zoom 150% en desktop */
+/* ── Burger ──────────────────────────────────────────────
+   Aparece en <=1100px (cubre 150% zoom en pantallas 1280-1440px)
+   Los botones de rol (.tb-rol-btn) se ocultan al mismo tiempo
+   El nombre de usuario se oculta antes (<=900px)
+   ──────────────────────────────────────────────────────── */
 .tb-burger{display:none;flex-direction:column;gap:5px;padding:8px;flex-shrink:0}
 .tb-burger span{width:22px;height:2px;background:var(--cream);border-radius:2px;transition:transform .3s,opacity .3s}
 .tb-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .tb-burger.open span:nth-child(2){opacity:0}
 .tb-burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Nombre usuario desaparece primero para ganar espacio */
+@media(max-width:1000px){
+  .tb-user{display:none}
+}
+
+/* Burger + ocultar nav links + ocultar botones de rol */
+@media(max-width:1100px){
+  .tb-burger{display:flex}
+  .tb-nav{display:none}
+  .tb-rol-btn{display:none}
+  .btn-sm{padding:6px 9px;font-size:.62rem}
+  .tb-right{gap:3px;padding-left:8px}
+  #topbar{gap:8px;padding:0 12px}
+}
 
 #mobileMenu{
   display:none;position:fixed;
@@ -173,6 +192,7 @@ img{max-width:100%;display:block}
   z-index:490;
   flex-direction:column;align-items:center;justify-content:center;gap:6px;
   transform:translateX(-100%);transition:transform .38s var(--ease);
+  overflow-y:auto;
 }
 #mobileMenu.open{transform:translateX(0)}
 .mm-link{
@@ -183,15 +203,17 @@ img{max-width:100%;display:block}
   color:rgba(250,245,236,.8);
   transition:background .2s,color .2s;
   border:1px solid transparent;
+  box-sizing:border-box;background:none;
 }
 .mm-link:hover,.mm-link.active{
   background:rgba(201,146,42,.1);
   color:var(--gold);
   border-color:rgba(201,146,42,.2);
 }
-.mm-icon{font-size:1.3rem}
+.mm-icon{font-size:1.4rem;width:32px;text-align:center;flex-shrink:0}
 
-main{min-height:calc(100vh - var(--nav-h));padding:clamp(32px,5vw,60px) clamp(16px,5vw,60px) 80px;max-width:1200px;margin:0 auto;}
+/* El main contiene el overflow — no html/body para no romper position:fixed */
+main{min-height:calc(100vh - var(--nav-h));padding:clamp(32px,5vw,60px) clamp(16px,5vw,60px) 80px;max-width:1200px;margin:0 auto;overflow-x:hidden;}
 .eyebrow{font-family:var(--ff-m);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--clay);display:flex;align-items:center;gap:9px;margin-bottom:10px}
 .eyebrow::before{content:'';width:20px;height:1px;background:currentColor}
 .page-h1{font-family:var(--ff-d);font-size:clamp(2.4rem,5vw,4.2rem);font-weight:900;line-height:.95;letter-spacing:-.03em;color:var(--ink);margin-bottom:16px}
@@ -238,7 +260,7 @@ main{min-height:calc(100vh - var(--nav-h));padding:clamp(32px,5vw,60px) clamp(16
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 20px;text-align:center;color:rgba(26,18,8,.35)}
 .empty-icon{font-size:2.8rem}.empty p{font-size:1.05rem;font-weight:300}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.1;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-@media(max-width:1280px){.tb-nav{display:none}.tb-burger{display:flex}.grid-3{grid-template-columns:repeat(2,1fr)}.grid-4{grid-template-columns:repeat(2,1fr)}}
+/* nav/burger handled above */.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}@media(max-width:900px){.grid-3{grid-template-columns:repeat(2,1fr)}.grid-4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.grid-2,.grid-3,.grid-4,.grid-auto{grid-template-columns:1fr}}
 </style>
 </head>
@@ -259,24 +281,26 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
     <?php if ($user): ?>
       <span class="tb-user"><?= htmlspecialchars(explode(' ', $user['nombre'])[0]) ?></span>
 
+      <!-- Botones de rol: visibles en PC, ocultos cuando aparece el burger -->
       <?php if ($user['rol'] === 'admin'): ?>
-        <a class="btn-sm btn-ghost-sm" href="<?= $base ?>/src/admin/admin.php">⚙️ Admin</a>
+        <a class="btn-sm btn-ghost-sm tb-rol-btn" href="<?= $base ?>/src/admin/admin.php">⚙️ Admin</a>
       <?php endif; ?>
 
       <?php if ($user['rol'] === 'artista'): ?>
         <?php if ($artistaVerificado): ?>
-          <a class="btn-sm btn-ghost-sm" href="<?= $base ?>/src/artistas/perfil/index.php">🎨 Mi perfil</a>
+          <a class="btn-sm btn-ghost-sm tb-rol-btn" href="<?= $base ?>/src/artistas/perfil/index.php">🎨 Mi perfil</a>
+          <!-- Versión compacta visible solo cuando el burger está activo (≤1100px / zoom >150%) -->
         <?php else: ?>
-          <button class="btn-sm btn-ghost-sm"
+          <button class="btn-sm btn-ghost-sm tb-rol-btn"
             onclick="toast('Aún no estás verificado. Un administrador revisará tu perfil pronto.','warn')">
             🎨 Mi perfil
           </button>
         <?php endif; ?>
       <?php endif; ?>
 
-      <a class="btn-sm btn-ghost-sm" href="<?= $base ?>/src/perfil/index.php">👤 Cuenta</a>
+      <a class="btn-sm btn-ghost-sm tb-rol-btn" href="<?= $base ?>/src/perfil/index.php">👤 Cuenta</a>
 
-      <!-- Carrito -->
+      <!-- Carrito: siempre visible -->
       <a class="tb-cart-btn" href="<?= $base ?>/src/tienda/tienda.php" id="navCartLink">
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
@@ -296,23 +320,54 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
     <?php endif; ?>
   </div>
 
-  <button class="tb-burger" id="tbBurger"><span></span><span></span><span></span></button>
+  <button class="tb-burger" id="tbBurger" aria-label="Menú"><span></span><span></span><span></span></button>
 </header>
 
 <div id="mobileMenu">
+  <!-- Navegación principal -->
   <?php foreach ($NAV as $n): ?>
     <a class="mm-link <?= $n['id'] === $pageId ? 'active' : '' ?>" href="<?= $n['href'] ?>">
       <span class="mm-icon"><?= $n['icon'] ?></span><?= $n['label'] ?>
     </a>
   <?php endforeach; ?>
-  <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px;width:82%;max-width:300px">
-    <?php if ($user): ?>
-      <a class="btn btn-outline" style="justify-content:center" href="<?= $base ?>/src/auth/logout.php">Cerrar sesión</a>
-    <?php else: ?>
-      <a class="btn btn-gold"    style="justify-content:center" href="<?= $base ?>/src/auth/login/index.php">Iniciar sesión</a>
-      <a class="btn btn-outline" style="justify-content:center" href="<?= $base ?>/src/auth/register/index.php">Registrarse</a>
+
+  <!-- Separador -->
+  <div style="width:85%;max-width:320px;height:1px;background:rgba(201,146,42,.15);margin:10px 0"></div>
+
+  <!-- Sección de cuenta (rol-dependiente) -->
+  <?php if ($user): ?>
+    <?php if ($user['rol'] === 'admin'): ?>
+      <a class="mm-link" href="<?= $base ?>/src/admin/admin.php">
+        <span class="mm-icon">⚙️</span>Panel Admin
+      </a>
     <?php endif; ?>
-  </div>
+
+    <?php if ($user['rol'] === 'artista'): ?>
+      <?php if ($artistaVerificado): ?>
+        <a class="mm-link" href="<?= $base ?>/src/artistas/perfil/index.php">
+          <span class="mm-icon">🎨</span>Mi perfil
+        </a>
+      <?php else: ?>
+        <button class="mm-link" style="text-align:left"
+          onclick="document.getElementById('mobileMenu').classList.remove('open');document.getElementById('tbBurger').classList.remove('open');toast('Aún no estás verificado. Un administrador revisará tu perfil pronto.','warn')">
+          <span class="mm-icon">🎨</span>Mi perfil
+        </button>
+      <?php endif; ?>
+    <?php endif; ?>
+
+    <a class="mm-link" href="<?= $base ?>/src/perfil/index.php">
+      <span class="mm-icon">👤</span>Mi cuenta
+    </a>
+
+    <div style="margin-top:8px;width:85%;max-width:320px">
+      <a class="btn btn-outline" style="justify-content:center;width:100%;color:rgba(250,245,236,.7);border-color:rgba(250,245,236,.2)" href="<?= $base ?>/src/auth/logout.php">Cerrar sesión</a>
+    </div>
+  <?php else: ?>
+    <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px;width:85%;max-width:320px">
+      <a class="btn btn-gold"    style="justify-content:center" href="<?= $base ?>/src/auth/login/index.php">Iniciar sesión</a>
+      <a class="btn btn-outline" style="justify-content:center;color:rgba(250,245,236,.7);border-color:rgba(250,245,236,.2)" href="<?= $base ?>/src/auth/register/index.php">Registrarse</a>
+    </div>
+  <?php endif; ?>
 </div>
 
 <div id="toast"><span class="toast-icon"></span><span class="toast-msg"></span></div>

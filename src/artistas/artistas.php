@@ -61,25 +61,25 @@ $emojis = ['🎨','🏺','🪇','🧵','🖼️','💃','📷','🎭','🌺','�
     </div>
   </div>
 
-  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:32px">
+  <div class="art-filtros" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:32px;width:100%;box-sizing:border-box">
     <input
       id="artistaSearch"
       type="text"
-      placeholder="Buscar por nombre, disciplina, descripción o municipio…"
-      style="flex:1;min-width:200px;background:#FFFEF9;border:1.5px solid #000000;border-radius:8px;padding:10px 16px;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.05rem;font-weight:700;color:#000000;transition:border-color .22s,box-shadow .22s;outline:none;box-shadow:none"
+      placeholder="Buscar por nombre, disciplina o municipio…"
+      style="flex:1;min-width:0;width:100%;background:#FFFEF9;border:1.5px solid #EDE4D0;border-radius:8px;padding:10px 16px;font-family:'Cormorant Garamond',Georgia,serif;font-size:1rem;font-weight:600;color:#000000;transition:border-color .22s,box-shadow .22s;outline:none;box-shadow:none;box-sizing:border-box"
       onfocus="this.style.borderColor='rgb(201, 146, 42)';this.style.boxShadow='0 0 0 3px rgba(201,146,42,.1)'"
       onblur="this.style.borderColor='#EDE4D0';this.style.boxShadow='none'"
     />
-    <div style="position:relative;flex-shrink:0">
+    <div style="position:relative;min-width:0;width:100%;max-width:260px;flex-shrink:1;box-sizing:border-box">
       <select
         id="disciplinaSelect"
-        style="-webkit-appearance:none;appearance:none;padding:10px 36px 10px 16px;border:1.5px solid #EDE4D0;border-radius:8px;background:#FFFEF9;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.05rem;font-weight:700;color:#1A1208;cursor:pointer;outline:none;transition:border-color .22s,box-shadow .22s;min-width:240px;box-shadow:none"
+        style="-webkit-appearance:none;appearance:none;padding:10px 36px 10px 16px;border:1.5px solid #EDE4D0;border-radius:8px;background:#FFFEF9;font-family:'Cormorant Garamond',Georgia,serif;font-size:1rem;font-weight:600;color:#1A1208;cursor:pointer;outline:none;transition:border-color .22s,box-shadow .22s;width:100%;box-shadow:none;box-sizing:border-box"
         onfocus="this.style.borderColor='rgb(201, 146, 42)';this.style.boxShadow='0 0 0 3px rgba(201,146,42,.1)'"
         onblur="this.style.borderColor='#EDE4D0';this.style.boxShadow='none'"
       >
-        <option value="all">🎭 Todas las disciplinas (<?= count($artistas) ?>)</option>
+        <option value="all">Todas las disciplinas (<?= count($artistas) ?>)</option>
         <?php foreach ($disciplinas as $d): ?>
-          <option value="<?= htmlspecialchars($d) ?>"><?= ($catIcons[$d] ?? '✨') . ' ' . htmlspecialchars($d) ?></option>
+          <option value="<?= htmlspecialchars($d) ?>"><?= htmlspecialchars($d) ?></option>
         <?php endforeach; ?>
       </select>
       <span style="position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:.75rem;color:rgba(26,18,8,.4);pointer-events:none">▾</span>

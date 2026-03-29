@@ -162,6 +162,7 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
     </div>
 
     <?php if ($user): ?>
+    <div class="carrito-overlay" id="carritoOverlay" onclick="toggleCarrito()"></div>
     <aside class="carrito-panel<?= $carritoCount > 0 ? ' carrito-open' : '' ?>" id="carritoPanel">
       <div class="carrito-header">
         <h3 class="carrito-title">🛒 Mi carrito <span style="font-size:.7rem;font-weight:400;color:rgba(26,18,8,.38)">(<?= $carritoCount ?> items)</span></h3>
