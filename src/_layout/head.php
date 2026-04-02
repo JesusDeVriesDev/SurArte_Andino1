@@ -160,8 +160,8 @@ img{max-width:100%;display:block}
 
 /* ── Burger ──────────────────────────────────────────────
    Aparece en <=1100px (cubre 150% zoom en pantallas 1280-1440px)
-   Los botones de rol (.tb-rol-btn) se ocultan al mismo tiempo
-   El nombre de usuario se oculta antes (<=900px)
+   Los botones de rol (.tb-rol-btn) y auth (.tb-auth-btn) se ocultan al mismo tiempo
+   El nombre de usuario se oculta antes (<=1000px)
    ──────────────────────────────────────────────────────── */
 .tb-burger{display:none;flex-direction:column;gap:5px;padding:8px;flex-shrink:0}
 .tb-burger span{width:22px;height:2px;background:var(--cream);border-radius:2px;transition:transform .3s,opacity .3s}
@@ -174,11 +174,11 @@ img{max-width:100%;display:block}
   .tb-user{display:none}
 }
 
-/* Burger + ocultar nav links + ocultar botones de rol */
+/* Burger + ocultar nav links + ocultar botones de rol y auth */
 @media(max-width:1100px){
   .tb-burger{display:flex}
   .tb-nav{display:none}
-  .tb-rol-btn{display:none}
+  .tb-rol-btn, .tb-auth-btn{display:none}
   .btn-sm{padding:6px 9px;font-size:.62rem}
   .tb-right{gap:3px;padding-left:8px}
   #topbar{gap:8px;padding:0 12px}
@@ -289,7 +289,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
       <?php if ($user['rol'] === 'artista'): ?>
         <?php if ($artistaVerificado): ?>
           <a class="btn-sm btn-ghost-sm tb-rol-btn" href="<?= $base ?>/src/artistas/perfil/index.php">🎨 Mi perfil</a>
-          <!-- Versión compacta visible solo cuando el burger está activo (≤1100px / zoom >150%) -->
         <?php else: ?>
           <button class="btn-sm btn-ghost-sm tb-rol-btn"
             onclick="toast('Aún no estás verificado. Un administrador revisará tu perfil pronto.','warn')">
@@ -315,8 +314,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
 
       <a class="btn-sm btn-ghost-sm" href="<?= $base ?>/src/auth/logout.php">Salir</a>
     <?php else: ?>
-      <a class="btn-sm btn-ghost-sm" href="<?= $base ?>/src/auth/login/index.php">Iniciar sesión</a>
-      <a class="btn-sm btn-gold-sm"  href="<?= $base ?>/src/auth/register/index.php">Registrarse</a>
+      <!-- tb-auth-btn: visibles en PC, ocultos en móvil (van al menú hamburguesa) -->
+      <a class="btn-sm btn-ghost-sm tb-auth-btn" href="<?= $base ?>/src/auth/login/index.php">Iniciar sesión</a>
+      <a class="btn-sm btn-gold-sm  tb-auth-btn"  href="<?= $base ?>/src/auth/register/index.php">Registrarse</a>
     <?php endif; ?>
   </div>
 
@@ -363,10 +363,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
       <a class="btn btn-outline" style="justify-content:center;width:100%;color:rgba(250,245,236,.7);border-color:rgba(250,245,236,.2)" href="<?= $base ?>/src/auth/logout.php">Cerrar sesión</a>
     </div>
   <?php else: ?>
-    <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px;width:85%;max-width:320px">
-      <a class="btn btn-gold"    style="justify-content:center" href="<?= $base ?>/src/auth/login/index.php">Iniciar sesión</a>
-      <a class="btn btn-outline" style="justify-content:center;color:rgba(250,245,236,.7);border-color:rgba(250,245,236,.2)" href="<?= $base ?>/src/auth/register/index.php">Registrarse</a>
-    </div>
+    <!-- Botones de auth en el menú móvil -->
+    <a class="mm-link" href="<?= $base ?>/src/auth/login/index.php">
+      <span class="mm-icon">🔑</span>Iniciar sesión
+    </a>
+    <a class="mm-link" href="<?= $base ?>/src/auth/register/index.php">
+      <span class="mm-icon">✨</span>Registrarse
+    </a>
   <?php endif; ?>
 </div>
 
@@ -400,3 +403,5 @@ function updateNavCartBadge(count) {
   badge.style.display = count > 0 ? 'inline-flex' : 'none';
 }
 </script>
+</body>
+</html>
