@@ -358,10 +358,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
     <a class="mm-link" href="<?= $base ?>/src/perfil/index.php">
       <span class="mm-icon">👤</span>Mi cuenta
     </a>
-
-    <div style="margin-top:8px;width:85%;max-width:320px">
-      <a class="btn btn-outline" style="justify-content:center;width:100%;color:rgba(250,245,236,.7);border-color:rgba(250,245,236,.2)" href="<?= $base ?>/src/auth/logout.php">Cerrar sesión</a>
-    </div>
   <?php else: ?>
     <!-- Botones de auth en el menú móvil -->
     <a class="mm-link" href="<?= $base ?>/src/auth/login/index.php">

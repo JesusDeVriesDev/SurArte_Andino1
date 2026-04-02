@@ -61,8 +61,5 @@ $navItems = [
     <div data-auth="guest">
       <button class="sn-icon-btn" onclick="Router.go('login')" title="Iniciar sesión">👤</button>
     </div>
-    <div data-auth="logged" style="display:none">
-      <button class="sn-icon-btn" onclick="Auth.logout()" title="Cerrar sesión">🚪</button>
-    </div>
   </div>
 </nav>
