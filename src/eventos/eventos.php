@@ -143,9 +143,9 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
   </section>
 
   <?php else: ?>
-  <div class="empty" style="margin-top:60px">
+  <div class="empty" style="margin-top:60px;color:rgb(0, 0, 0)">
     <div class="empty-icon">📅</div>
-    <p>No hay eventos próximos registrados.</p>
+    <p style="font-size:1.7rem">No hay eventos próximos registrados.</p>
   </div>
   <?php endif; ?>
 

@@ -69,7 +69,7 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
         <h1 style="font-family:var(--ff-d);font-size:clamp(2rem,4vw,3.4rem);font-weight:900;color:var(--ink);line-height:.95;letter-spacing:-.03em;margin-bottom:14px">
           Tienda <em style="font-style:italic;color:var(--clay)">artesanal</em>
         </h1>
-        <p style="font-family:var(--ff-b);font-size:1rem;font-weight:300;color:rgba(26,18,8,.45);max-width:480px;line-height:1.75">
+        <p style="font-family:var(--ff-b);font-size:1.25rem;font-weight:300;color:rgb(0,0,0);max-width:480px;line-height:1.75">
           Adquiere piezas únicas de artistas verificados de Nariño.
         </p>
       </div>
@@ -154,9 +154,9 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
         </div>
         <?php endforeach; ?>
       <?php else: ?>
-        <div class="empty-products">
+        <div class="empty-products" style="color:rgb(0, 0, 0)">
           <div class="empty-icon">🛍️</div>
-          <p>Aún no hay productos disponibles.</p>
+          <p style="font-size:2.2rem">Aún no hay productos disponibles.</p>
         </div>
       <?php endif; ?>
     </div>
@@ -165,7 +165,7 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
     <div class="carrito-overlay" id="carritoOverlay" onclick="toggleCarrito()"></div>
     <aside class="carrito-panel<?= $carritoCount > 0 ? ' carrito-open' : '' ?>" id="carritoPanel">
       <div class="carrito-header">
-        <h3 class="carrito-title">🛒 Mi carrito <span style="font-size:.7rem;font-weight:400;color:rgba(26,18,8,.38)">(<?= $carritoCount ?> items)</span></h3>
+        <h3 class="carrito-title">🛒 Mi carrito <span style="font-size:.9rem;font-weight:400;color:rgb(0,0,0)">(<?= $carritoCount ?> items)</span></h3>
         <button onclick="toggleCarrito()" class="carrito-close-btn">✕</button>
       </div>
 
@@ -195,8 +195,8 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
         <?php else: ?>
           <div class="carrito-empty" id="carritoEmpty">
             <div style="font-size:2.2rem">🛒</div>
-            <p>Tu carrito está vacío</p>
-            <span style="font-size:.75rem;color:rgba(26,18,8,.3)">Agrega productos con el botón +</span>
+            <p style="font-size:1.2rem;color:rgb(0,0,0)">Tu carrito está vacío</p>
+            <span style="font-size:1.2rem;color:rgb(0,0,0)">Agrega productos con el botón +</span>
           </div>
         <?php endif; ?>
       </div>
@@ -226,7 +226,7 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
       <h2 style="font-family:var(--ff-d);font-size:clamp(1.6rem,3vw,2.6rem);font-weight:900;color:#fff;line-height:1.1">
         ¿Tienes artesanías<br>que <em style="font-style:italic;color:var(--gold)">vender?</em>
       </h2>
-      <p style="font-size:.95rem;font-weight:300;color:rgba(250,245,236,.45);margin-top:10px;max-width:360px">
+      <p style="font-size:.95rem;font-weight:300;color:rgb(255, 255, 255);margin-top:10px;max-width:360px">
         Crea tu perfil de artista y comienza a vender sin intermediarios.
       </p>
     </div>

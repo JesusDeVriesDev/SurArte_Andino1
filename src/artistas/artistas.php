@@ -132,7 +132,7 @@ $emojis = ['🎨','🏺','🪇','🧵','🖼️','💃','📷','🎭','🌺','�
       <h2 style="font-family:var(--ff-d);font-size:clamp(1.8rem,3.5vw,3rem);font-weight:900;color:#fff;line-height:1.1">
         ¿Eres artista<br>de <em style="font-style:italic;color:var(--gold)">Nariño?</em>
       </h2>
-      <p style="font-size:1rem;font-weight:300;color:rgba(250,245,236,.45);margin-top:10px;max-width:360px">
+      <p style="font-size:1rem;font-weight:300;color:rgb(255, 255, 255);margin-top:10px;max-width:360px">
         Crea tu perfil gratuito, sube tu portafolio y vende tu arte directamente.
       </p>
     </div>
