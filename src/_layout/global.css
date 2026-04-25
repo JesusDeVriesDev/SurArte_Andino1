@@ -1,101 +1,127 @@
+/* ─── Animación de parpadeo ──────────────────────────────────────────────────
+   Usada en elementos que necesitan llamar la atención de forma sutil,
+   como indicadores de estado activo o notificaciones pendientes.
+   Va del 100% al 15% de opacidad para no desaparecer completamente. */
 @keyframes blink {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.15;
-    }
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.15; }
 }
 
+
+/* ─── Hover de stat-cards ────────────────────────────────────────────────────
+   Al pasar el cursor, la tarjeta se desplaza levemente hacia la derecha
+   en lugar de hacia arriba — diferencia visual respecto a las .card normales
+   para distinguir los dos tipos de tarjeta en el dashboard. */
 .stat-card:hover {
     border-color: rgba(201, 146, 42, 0.28) !important;
     box-shadow: var(--sh);
     transform: translateX(6px);
 }
 
+
+/* ─── Hover en la primera celda de .card ─────────────────────────────────────
+   Cuando el usuario pasa por encima de cualquier .card, se activa el borde
+   dorado en el primer div hijo del card-body. Esto da un acento de color
+   sin necesidad de un elemento decorativo extra en el HTML. */
 .card:hover > .card-body > div:first-child > div:first-child {
     border-color: var(--gold) !important;
 }
 
+
+/* ─── Animación escalonada de stat-cards al cargar la página ─────────────────
+   Las stat-cards del primer bloque del main entran con fadeUp con un delay
+   incremental por posición (nth-child), dando el efecto de que aparecen
+   una tras otra en lugar de todas a la vez. */
 main > div:first-child > div:last-child .stat-card {
     animation: fadeUp 0.6s var(--ease) both;
 }
+main > div:first-child > div:last-child .stat-card:nth-child(1) { animation-delay: 0.1s; }
+main > div:first-child > div:last-child .stat-card:nth-child(2) { animation-delay: 0.2s; }
+main > div:first-child > div:last-child .stat-card:nth-child(3) { animation-delay: 0.3s; }
+main > div:first-child > div:last-child .stat-card:nth-child(4) { animation-delay: 0.4s; }
 
-main > div:first-child > div:last-child .stat-card:nth-child(1) {
-    animation-delay: 0.1s;
-}
 
-main > div:first-child > div:last-child .stat-card:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-main > div:first-child > div:last-child .stat-card:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-main > div:first-child > div:last-child .stat-card:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
+/* ─── Keyframe fadeUp ────────────────────────────────────────────────────────
+   Entrada desde abajo con fade — los 16px de desplazamiento son suficientes
+   para percibir movimiento sin que se sienta exagerado. */
 @keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(16px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
+
+/* ─── Responsive del bloque principal del dashboard ─────────────────────────
+   En tablets (≤860px) el grid de dos columnas del main colapsa a una sola,
+   y las stat-cards pasan a una grilla de 2 columnas para aprovechar el ancho. */
 @media (max-width: 860px) {
     main > div:first-child {
         grid-template-columns: 1fr !important;
     }
-
     main > div:first-child > div:last-child {
         display: grid;
         grid-template-columns: repeat(2, 1fr) !important;
     }
 }
 
+/* En móviles pequeños (≤560px) las stat-cards también colapsan a una columna */
 @media (max-width: 560px) {
     main > div:first-child > div:last-child {
         grid-template-columns: 1fr !important;
     }
 }
 
-html,body{
-    height:100%;
-    overflow:hidden;
-    font-family:var(--ff-b);
-    background:var(--ink);
-    color:var(--cream)
+
+/* ─── Base del body para páginas de dashboard ────────────────────────────────
+   overflow:hidden evita barras de scroll a nivel de html/body — el scroll
+   queda controlado por el elemento <main> de cada página.
+   background e color coinciden con el tema oscuro del dashboard. */
+html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--ff-b);
+    background: var(--ink);
+    color: var(--cream);
 }
 
-:root{
-  --ink:#1A1208;
+/* Sobreescribe el --ink definido en head.css con el mismo valor — mantiene
+   consistencia si en algún momento se cambia en un solo lugar. */
+:root {
+  --ink: #1A1208;
 }
 
-body::after{
-    content:'';
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:9998;
-    opacity:.22;
-    background-image:url("data:image/svg+xml,...");
+
+/* ─── Capa de ruido/grano sobre el fondo ─────────────────────────────────────
+   SVG fractal en base64 aplicado como background-image con baja opacidad.
+   pointer-events:none y z-index alto aseguran que no interfiera con ningún
+   elemento interactivo de la página. */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: .22;
+    background-image: url("data:image/svg+xml,...");
 }
 
-#pg-inicio{
-  background:var(--ink);
+
+/* ─── Fondo de la página de inicio ──────────────────────────────────────────
+   Dos degradados radiales para simular iluminación de fondo sin imágenes:
+   uno cálido (arcilla) en la esquina superior derecha y uno frío (cielo)
+   en la esquina inferior izquierda. */
+#pg-inicio {
+  background: var(--ink);
   background-image:
     radial-gradient(ellipse 55% 50% at 85% 15%, rgba(139,58,28,.32) 0%, transparent 70%),
     radial-gradient(ellipse 40% 40% at 8% 85%, rgba(29,78,107,.22) 0%, transparent 70%);
 }
 
-#loader{
-  position:fixed;
-  inset:0;
-  background:var(--ink);
+
+/* ─── Loader de pantalla completa ────────────────────────────────────────────
+   Cubre todo el viewport mientras la página carga recursos asincrónicos.
+   JS lo oculta una vez que el contenido esté listo. */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
 }

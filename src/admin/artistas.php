@@ -11,6 +11,8 @@ if (!$user || $user['rol'] !== 'admin') {
 }
 
 try {
+    // Trae todos los artistas con el email del usuario vinculado.
+    // Se ordenan primero los no verificados para que el admin los atienda enseguida.
     $artistas = db()->query(
         "SELECT a.id, a.nombre, a.disciplina, a.municipio, a.verificado, a.creado_en,
                 u.email AS usuario_email
@@ -23,9 +25,10 @@ try {
     $dbError = $e->getMessage();
 }
 
-$catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨',
-               'pintura'=>'🖼️','escultura'=>'🗿','fotografia'=>'📷','teatro'=>'🎭'];
-$pendientes = array_filter($artistas, fn($a) => !$a['verificado']);
+$catIcons    = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨',
+                'pintura'=>'🖼️','escultura'=>'🗿','fotografia'=>'📷','teatro'=>'🎭'];
+// Separa los arrays en pendientes y verificados para renderizar dos secciones distintas
+$pendientes  = array_filter($artistas, fn($a) => !$a['verificado']);
 $verificados = array_filter($artistas, fn($a) => $a['verificado']);
 ?>
 <!DOCTYPE html>
@@ -145,6 +148,7 @@ $verificados = array_filter($artistas, fn($a) => $a['verificado']);
         </tr>
       </thead>
       <tbody>
+        <?php /* ORDER BY verificado ASC coloca los pendientes primero automáticamente */ ?>
         <?php if (!empty($artistas)): ?>
           <?php foreach ($artistas as $a): ?>
           <tr data-rol="<?= $a['verificado'] ? 'verificado' : 'pendiente' ?>">

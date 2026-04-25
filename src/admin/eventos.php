@@ -5,30 +5,34 @@ $pageId    = 'admin';
 require_once '../_layout/head.php';
 require_once '../../config/db.php';
 
+// Acceso restringido al rol admin
 if (!$user || $user['rol'] !== 'admin') {
     header('Location: ' . $base . '/src/auth/login/index.php?redirect=admin');
     exit;
 }
 
+// Mensajes flash del formulario de crear/editar eventos
 $ok    = $_SESSION['evento_ok']    ?? null;
 $error = $_SESSION['evento_error'] ?? null;
 unset($_SESSION['evento_ok'], $_SESSION['evento_error']);
 
 try {
+    // Trae todos los eventos con el nombre del organizador para mostrarlo en la tabla
     $eventos = db()->query(
-    "SELECT e.id, e.titulo, e.descripcion, e.categoria, e.lugar, e.municipio,
-            e.fecha_inicio, e.fecha_fin, e.precio, e.aforo,
-            e.imagen_url, e.activo, e.creado_en,
-            u.nombre AS organizador_nombre
-     FROM eventos e
-     LEFT JOIN usuarios u ON e.organizador_id = u.id
-     ORDER BY e.fecha_inicio DESC"
-)->fetchAll();
+        "SELECT e.id, e.titulo, e.descripcion, e.categoria, e.lugar, e.municipio,
+                e.fecha_inicio, e.fecha_fin, e.precio, e.aforo,
+                e.imagen_url, e.activo, e.creado_en,
+                u.nombre AS organizador_nombre
+         FROM eventos e
+         LEFT JOIN usuarios u ON e.organizador_id = u.id
+         ORDER BY e.fecha_inicio DESC"
+    )->fetchAll();
 } catch (PDOException $e) {
     $eventos = [];
     $dbError = $e->getMessage();
 }
 
+// Arrays de categorías para el select del modal de creación/edición
 $categorias = ['musica','arte','artesania','danza','literatura','otro'];
 $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨'];
 $catLabels  = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danza'=>'Danza','literatura'=>'Literatura','otro'=>'Otro'];

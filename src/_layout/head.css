@@ -1,0 +1,808 @@
+/*
+ * ============================================================
+ * HEAD.CSS — Estilos globales de SurArte Andino
+ * Extraído de head.php para mantener separación de responsabilidades.
+ * Este archivo cubre: variables, reset, topbar/nav, menú móvil,
+ * utilidades de layout, componentes reutilizables y responsive.
+ *
+ * [QA] Antes de tocar este archivo, revisar que el <link> en head.php
+ *      apunte correctamente a la ruta relativa de este CSS.
+ *      Cualquier cambio aquí afecta TODAS las páginas del sitio.
+ * ============================================================
+ */
+
+
+/* ────────────────────────────────────────────────────────────
+   1. VARIABLES GLOBALES
+   Define la paleta de colores, tipografías, sombras y tiempos
+   de animación que usa todo el sistema de diseño.
+   [QA] Si se agrega un nuevo color aquí, documentarlo también
+        en el README o en la guía de estilos del proyecto.
+   ──────────────────────────────────────────────────────────── */
+:root {
+  /* Paleta principal */
+  --gold:        #C9922A;
+  --gold-lt:     #E8B84B;
+  --gold-pale:   #F5E6C8;
+  --ink:         #1A1208;
+  --ink-mid:     #3D2B10;
+  --clay:        #8B3A1C;
+  --clay-lt:     #B5552E;
+  --sky:         #1D4E6B;
+  --sky-lt:      #2E7AA8;
+  --cream:       #FAF5EC;
+  --cream-dk:    #EDE4D0;
+  --white:       #FFFEF9;
+
+  /* Estados del sistema */
+  --ok:          #22c55e;
+  --err:         #ef4444;
+
+  /* Familias tipográficas */
+  --ff-d:        'Playfair Display', Georgia, serif;
+  --ff-b:        'Cormorant Garamond', Georgia, serif;
+  --ff-m:        'DM Mono', monospace;
+
+  /* Radios de borde */
+  --r:           8px;
+  --r-lg:        16px;
+  --r-full:      9999px;
+
+  /* Sombras */
+  --sh:          0 4px 24px rgba(26,18,8,.12);
+  --sh-lg:       0 16px 56px rgba(26,18,8,.22);
+  --sh-gold:     0 8px 28px rgba(201,146,42,.35);
+
+  /* Animaciones */
+  --ease:        cubic-bezier(.4,0,.2,1);
+  --dur:         .28s;
+
+  /* Altura del navbar */
+  --nav-h:       72px;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   2. RESET Y BASE
+   Normaliza comportamientos por defecto del navegador.
+   [QA] No agregar estilos visuales aquí — solo normalización.
+   ──────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--ff-b);
+  font-size: 16px;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Selección de texto con color de marca */
+::selection {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+/* Scrollbar personalizado — visible en Webkit/Chromium */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+/* Efecto de grano/ruido de fondo — capa decorativa, no interactiva */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: .1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   3. TOPBAR — BARRA DE NAVEGACIÓN SUPERIOR
+   Sticky en desktop. Contiene logo, nav principal y acciones
+   de usuario (cuenta, carrito, auth).
+   [QA] Verificar que z-index: 500 no colisione con modales u
+        overlays de terceros (por ejemplo, pickers de fecha).
+   ──────────────────────────────────────────────────────────── */
+#topbar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  height: var(--nav-h);
+  background: rgba(20,13,5,.98);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(201,146,42,.2);
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(16px,3vw,36px);
+  gap: 20px;
+}
+
+/* Logo de marca en el topbar */
+.tb-logo {
+  font-family: var(--ff-d);
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tb-logo span {
+  font-style: italic;
+  color: rgba(201,146,42,.65);
+}
+
+/* Contenedor del nav — scroll horizontal silencioso si no caben los links */
+.tb-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.tb-nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cada link del nav principal */
+.tb-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--r-full);
+  font-family: var(--ff-m);
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(250,245,236,.85);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color var(--dur), background var(--dur);
+}
+.tb-link:hover {
+  color: #fff;
+  background: rgba(250,245,236,.1);
+}
+.tb-link.active {
+  color: var(--gold);
+  background: rgba(201,146,42,.15);
+  border: 1px solid rgba(201,146,42,.25);
+}
+.tb-link .ti {
+  font-size: 1rem;
+}
+
+/* Zona derecha del topbar: nombre de usuario + botones de acción */
+.tb-right {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 16px;
+}
+
+/* Nombre del usuario — solo visible en pantallas grandes */
+.tb-user {
+  font-family: var(--ff-m);
+  font-size: .76rem;
+  letter-spacing: .06em;
+  color: rgba(250,245,236,.85);
+  white-space: nowrap;
+  padding: 0 6px;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   4. BOTONES DEL TOPBAR
+   Variantes pequeñas para el navbar: dorado, fantasma y carrito.
+   [QA] .btn-sm es la base — .btn-gold-sm y .btn-ghost-sm son
+        modificadores. No usar .btn-sm solo sin modificador.
+   ──────────────────────────────────────────────────────────── */
+.btn-sm {
+  padding: 7px 13px;
+  border-radius: var(--r);
+  font-family: var(--ff-m);
+  font-size: .71rem;
+  font-weight: 500;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  transition: all .22s;
+  white-space: nowrap;
+}
+
+/* Botón primario dorado del navbar */
+.btn-gold-sm {
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+}
+.btn-gold-sm:hover {
+  background: var(--gold-lt);
+  transform: translateY(-1px);
+}
+
+/* Botón fantasma (transparente) del navbar */
+.btn-ghost-sm {
+  color: rgba(250,245,236,.85);
+  border: none;
+  background: rgba(250,245,236,.06);
+}
+.btn-ghost-sm:hover {
+  color: #fff;
+  background: rgba(250,245,236,.12);
+}
+
+/* Botón del carrito con badge numérico */
+.tb-cart-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: var(--r);
+  font-family: var(--ff-m);
+  font-size: .71rem;
+  font-weight: 500;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: rgba(250,245,236,.85);
+  border: none;
+  background: rgba(250,245,236,.06);
+  transition: all .22s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.tb-cart-btn:hover {
+  color: #fff;
+  background: rgba(250,245,236,.12);
+}
+
+/* Círculo con el número de ítems en el carrito */
+.tb-cart-badge {
+  background: var(--gold);
+  color: var(--ink);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: .55rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ff-m);
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   5. BOTÓN HAMBURGUESA (BURGER)
+   Visible en ≤1100px. Anima sus tres líneas al estado "X"
+   cuando el menú móvil está abierto (clase .open en JS).
+   [QA] Los breakpoints del burger (1100px) y del nombre de
+        usuario (1000px) deben coincidir con los del menú móvil.
+   ──────────────────────────────────────────────────────────── */
+.tb-burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+.tb-burger span {
+  width: 22px;
+  height: 2px;
+  background: var(--cream);
+  border-radius: 2px;
+  transition: transform .3s, opacity .3s;
+}
+
+/* Estado abierto: las tres líneas forman una X */
+.tb-burger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.tb-burger.open span:nth-child(2) {
+  opacity: 0;
+}
+.tb-burger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   6. RESPONSIVE DEL TOPBAR
+   Oculta el nombre de usuario a ≤1000px para ganar espacio.
+   Activa el burger y oculta los links a ≤1100px (cubre
+   zoom al 150% en pantallas 1280–1440px).
+   ──────────────────────────────────────────────────────────── */
+@media (max-width: 1000px) {
+  .tb-user {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .tb-burger {
+    display: flex;
+  }
+  .tb-nav {
+    display: none;
+  }
+  .tb-rol-btn,
+  .tb-auth-btn {
+    display: none;
+  }
+  .btn-sm {
+    padding: 6px 9px;
+    font-size: .62rem;
+  }
+  .tb-right {
+    gap: 3px;
+    padding-left: 8px;
+  }
+  #topbar {
+    gap: 8px;
+    padding: 0 12px;
+  }
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   7. MENÚ MÓVIL (OVERLAY)
+   Panel fullscreen que desliza desde la izquierda al abrir el
+   burger. JS añade/quita la clase .open.
+   [QA] Verificar que el z-index: 490 quede por debajo del
+        topbar (500) para no ocultar el botón de cerrar.
+   ──────────────────────────────────────────────────────────── */
+#mobileMenu {
+  display: none;
+  position: fixed;
+  inset: var(--nav-h) 0 0;
+  background: rgba(15,10,4,.99);
+  backdrop-filter: blur(20px);
+  z-index: 490;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transform: translateX(-100%);
+  transition: transform .38s var(--ease);
+  overflow-y: auto;
+}
+#mobileMenu.open {
+  transform: translateX(0);
+}
+
+/* Links del menú móvil — más grandes y con ícono */
+.mm-link {
+  width: 85%;
+  max-width: 320px;
+  padding: 15px 24px;
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--ff-d);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: rgba(250,245,236,.8);
+  transition: background .2s, color .2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  background: none;
+}
+.mm-link:hover,
+.mm-link.active {
+  background: rgba(201,146,42,.1);
+  color: var(--gold);
+  border-color: rgba(201,146,42,.2);
+}
+
+/* Contenedor del ícono dentro del link móvil */
+.mm-icon {
+  font-size: 1.4rem;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   8. LAYOUT PRINCIPAL
+   El <main> absorbe el scroll horizontal para no romper los
+   elementos con position:fixed (topbar, toast, etc.).
+   [QA] max-width: 1200px + margin:auto centra el contenido
+        en pantallas anchas — no cambiar sin revisar las páginas
+        de admin que usan tablas anchas.
+   ──────────────────────────────────────────────────────────── */
+main {
+  min-height: calc(100vh - var(--nav-h));
+  padding: clamp(32px,5vw,60px) clamp(16px,5vw,60px) 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   9. TIPOGRAFÍA Y ELEMENTOS DE CABECERA DE PÁGINA
+   Clases reutilizables para el encabezado estándar de cada
+   sección: eyebrow, título principal, bajada y línea decorativa.
+   ──────────────────────────────────────────────────────────── */
+
+/* Texto superior pequeño tipo "Artistas · SurArte Andino" */
+.eyebrow {
+  font-family: var(--ff-m);
+  font-size: .62rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--clay);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+.eyebrow::before {
+  content: '';
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* Título H1 de cada página con escala fluida */
+.page-h1 {
+  font-family: var(--ff-d);
+  font-size: clamp(2.4rem,5vw,4.2rem);
+  font-weight: 900;
+  line-height: .95;
+  letter-spacing: -.03em;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+.page-h1 em {
+  font-style: italic;
+  color: var(--clay);
+}
+
+/* Párrafo descriptivo bajo el H1 */
+.page-lead {
+  font-size: clamp(.95rem,1.3vw,1.1rem);
+  font-weight: 300;
+  color: rgba(26,18,8,.52);
+  max-width: 520px;
+  line-height: 1.82;
+  margin-bottom: 36px;
+}
+
+/* Línea decorativa dorada — separador visual */
+.gold-line {
+  width: 42px;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 2px;
+  margin: 20px 0;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   10. BOTONES GENERALES
+   Sistema de botones para el cuerpo de las páginas (distintos
+   de los botones pequeños del topbar).
+   [QA] .btn es la clase base — siempre acompañarla con un
+        modificador de color (.btn-gold, .btn-outline, etc.).
+   ──────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border-radius: var(--r);
+  font-family: var(--ff-m);
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transition: all var(--dur) var(--ease);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: var(--ink);
+}
+.btn-gold:hover {
+  background: var(--gold-lt);
+  transform: translateY(-2px);
+  box-shadow: var(--sh-gold);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(26,18,8,.2);
+  color: var(--ink);
+}
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-danger {
+  background: var(--err);
+  color: #fff;
+}
+.btn-danger:hover {
+  opacity: .85;
+}
+
+/* Estado deshabilitado — aplica a cualquier variante de .btn */
+.btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   11. TARJETA (CARD)
+   Contenedor base para productos, artistas y eventos.
+   El hover eleva la tarjeta con sombra y pequeña traslación.
+   ──────────────────────────────────────────────────────────── */
+.card {
+  background: var(--white, #FFFEF9);
+  border: 1px solid var(--cream-dk);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: box-shadow var(--dur), transform var(--dur), border-color var(--dur);
+}
+.card:hover {
+  box-shadow: var(--sh-lg);
+  transform: translateY(-4px);
+}
+.card-body {
+  padding: 20px 22px;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   12. BADGES / ETIQUETAS
+   Pastillas de estado y categoría para productos, roles, etc.
+   [QA] No usar colores fuera de las variantes definidas aquí
+        para mantener consistencia visual.
+   ──────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--r-full);
+  font-family: var(--ff-m);
+  font-size: .52rem;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.badge-gold  { background: rgba(201,146,42,.12);  color: var(--gold); }
+.badge-clay  { background: rgba(139,58,28,.12);   color: var(--clay); }
+.badge-sky   { background: rgba(29,78,107,.12);   color: var(--sky);  }
+.badge-green { background: rgba(34,197,94,.1);    color: #16a34a;     }
+.badge-muted { background: rgba(26,18,8,.06);     color: rgba(26,18,8,.45); }
+
+
+/* ────────────────────────────────────────────────────────────
+   13. CAMPOS DE FORMULARIO
+   Inputs, selects y textareas con estilo unificado.
+   El foco activa un borde dorado con halo suave.
+   [QA] .field-err debe mostrarse siempre (aunque vacío) para
+        que el layout no salte al aparecer el mensaje de error.
+   ──────────────────────────────────────────────────────────── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.field-label {
+  font-family: var(--ff-m);
+  font-size: .6rem;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: rgba(26,18,8,.52);
+}
+.field-input,
+.field-select,
+.field-textarea {
+  background: var(--cream-dk);
+  border: 1.5px solid transparent;
+  border-radius: var(--r);
+  padding: 10px 13px;
+  font-family: var(--ff-b);
+  font-size: .97rem;
+  color: var(--ink);
+  transition: border-color .22s;
+  width: 100%;
+}
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,146,42,.1);
+}
+.field-input::placeholder,
+.field-textarea::placeholder {
+  color: rgba(26,18,8,.27);
+}
+.field-input.err {
+  border-color: var(--err);
+}
+.field-err {
+  font-size: .73rem;
+  color: var(--err);
+  min-height: 15px;
+}
+.field-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   14. TOAST — NOTIFICACIONES FLOTANTES
+   Aparece en la esquina inferior derecha. JS agrega/quita .show.
+   [QA] z-index: 9000 — colocarlo por debajo del body::after
+        (9998) para que el grano de fondo no lo tape.
+        Verificar que el timeout en JS (3800ms) coincida con
+        la transición CSS (.42s) para evitar parpadeos.
+   ──────────────────────────────────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 9000;
+  background: rgba(26,18,8,.96);
+  border: 1px solid rgba(201,146,42,.25);
+  border-radius: 14px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 320px;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: transform .42s var(--ease), opacity .42s;
+  pointer-events: none;
+}
+#toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+.toast-icon {
+  font-size: .9rem;
+}
+.toast-msg {
+  font-size: .88rem;
+  color: var(--cream);
+  font-weight: 300;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   15. ALERTAS EN LÍNEA
+   Mensajes de estado (error, éxito, info) dentro del contenido
+   de página. Distintos del toast — estos no son flotantes.
+   ──────────────────────────────────────────────────────────── */
+.alert {
+  padding: 11px 16px;
+  border-radius: var(--r);
+  margin-bottom: 18px;
+  font-size: .9rem;
+  font-weight: 300;
+}
+.alert-err  { background: rgba(239,68,68,.07);  border: 1px solid rgba(239,68,68,.18);  color: #b91c1c; }
+.alert-ok   { background: rgba(34,197,94,.07);  border: 1px solid rgba(34,197,94,.18);  color: #15803d; }
+.alert-info { background: rgba(29,78,107,.07);  border: 1px solid rgba(29,78,107,.18);  color: var(--sky); }
+
+
+/* ────────────────────────────────────────────────────────────
+   16. GRILLAS DE CONTENIDO
+   Grillas CSS responsivas para listar productos, artistas, etc.
+   [QA] .grid-auto es la más flexible — úsala cuando no se
+        conoce el número exacto de columnas de antemano.
+   ──────────────────────────────────────────────────────────── */
+.grid-2    { display: grid; grid-template-columns: repeat(2, 1fr);                     gap: 18px; }
+.grid-3    { display: grid; grid-template-columns: repeat(3, 1fr);                     gap: 18px; }
+.grid-4    { display: grid; grid-template-columns: repeat(4, 1fr);                     gap: 18px; }
+.grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 20px; }
+
+/* Colapso de grillas en tablets */
+@media (max-width: 900px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Columna única en móviles pequeños */
+@media (max-width: 560px) {
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .grid-auto {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   17. UTILIDADES DE LAYOUT (FLEXBOX Y ESPACIADO)
+   Clases de una sola responsabilidad para componer layouts
+   sin escribir CSS ad-hoc en cada página.
+   ──────────────────────────────────────────────────────────── */
+.flex          { display: flex; }
+.flex-col      { display: flex; flex-direction: column; }
+.items-center  { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2         { gap: 8px; }
+.gap-4         { gap: 16px; }
+.gap-6         { gap: 24px; }
+.mt-6          { margin-top: 24px; }
+.mt-8          { margin-top: 32px; }
+.mt-12         { margin-top: 48px; }
+.text-center   { text-align: center; }
+
+
+/* ────────────────────────────────────────────────────────────
+   18. ESTADO VACÍO (EMPTY STATE)
+   Se muestra cuando una sección no tiene contenido todavía,
+   por ejemplo: "No hay productos disponibles."
+   ──────────────────────────────────────────────────────────── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px 20px;
+  text-align: center;
+  color: rgba(26,18,8,.35);
+}
+.empty-icon { font-size: 2.8rem; }
+.empty p    { font-size: 1.05rem; font-weight: 300; }

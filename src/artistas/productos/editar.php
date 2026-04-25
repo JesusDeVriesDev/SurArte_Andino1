@@ -5,7 +5,12 @@ $pageId    = 'artistas';
 require_once '../../_layout/head.php';
 require_once '../../../config/db.php';
 
-if (!$user || $user['rol'] !== 'artista') { header('Location: ' . $base . '/src/artistas/artistas.php'); exit; }
+// Solo artistas verificados pueden editar sus productos
+if (!$user || $user['rol'] !== 'artista') {
+    header('Location: ' . $base . '/src/artistas/artistas.php'); exit;
+}
+
+// Verificación de estado (puede que el admin haya verificado al artista entre sesiones)
 $_guardVerificado = $_SESSION['artista_verificado'] ?? false;
 if (!$_guardVerificado) {
     try {
@@ -21,14 +26,17 @@ if (!$_guardVerificado) {
     header('Location: ' . $base . '/src/artistas/artistas.php'); exit;
 }
 
+// Requiere el ID del producto como parámetro GET — sin él no hay nada que editar
 $productoId = $_GET['id'] ?? null;
 if (!$productoId) { header('Location: index.php'); exit; }
 
 try {
+    // Obtiene el artista_id del usuario en sesión para validar propiedad del producto
     $artStmt = db()->prepare("SELECT id FROM artistas WHERE usuario_id = ?::uuid");
     $artStmt->execute([$_SESSION['user_id']]);
     $artista = $artStmt->fetch();
 
+    // El AND artista_id=? impide que un artista edite productos de otro aunque conozca el UUID
     $stmt = db()->prepare("SELECT * FROM productos WHERE id = ?::uuid AND artista_id = ?::uuid");
     $stmt->execute([$productoId, $artista['id']]);
     $prod = $stmt->fetch();

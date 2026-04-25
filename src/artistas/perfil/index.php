@@ -1,13 +1,16 @@
 <?php
-
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../../../config/db.php';
 
+// El perfil puede verse de dos formas:
+// 1) Con ?id=UUID: cualquier visitante ve el perfil público de ese artista.
+// 2) Sin parámetro: el artista autenticado ve su propio perfil privado.
 $artistaId = $_GET['id'] ?? null;
 $user      = isset($_SESSION['user_id'])
              ? ['nombre' => $_SESSION['nombre'], 'rol' => $_SESSION['rol']]
              : null;
 
+// Construye el prefijo de rutas (igual que en head.php)
 $script = $_SERVER['SCRIPT_NAME'] ?? '';
 $base   = '';
 if (preg_match('#(/SurArte_Andino)#i', $script, $m)) {
@@ -16,6 +19,7 @@ if (preg_match('#(/SurArte_Andino)#i', $script, $m)) {
 
 try {
     if ($artistaId) {
+        // Modo público: solo muestra artistas verificados
         $stmt = db()->prepare(
             "SELECT a.*, u.email, u.avatar_url AS user_avatar
              FROM artistas a LEFT JOIN usuarios u ON a.usuario_id = u.id
@@ -23,6 +27,7 @@ try {
         );
         $stmt->execute([$artistaId]);
     } elseif ($user) {
+        // Modo privado: el artista ve su propio perfil aunque no esté verificado
         $stmt = db()->prepare(
             "SELECT a.*, u.email, u.avatar_url AS user_avatar
              FROM artistas a LEFT JOIN usuarios u ON a.usuario_id = u.id
@@ -30,31 +35,35 @@ try {
         );
         $stmt->execute([$_SESSION['user_id']]);
     } else {
+        // Sin id en la URL ni sesión activa — no hay perfil que mostrar
         header('Location: ' . $base . '/src/artistas/artistas.php');
         exit;
     }
 
     $artista = $stmt->fetch();
-
     if (!$artista) {
         header('Location: ' . $base . '/src/artistas/artistas.php');
         exit;
     }
 
+    // Solo los productos activos son visibles en el perfil público
     $stmtP = db()->prepare(
         "SELECT * FROM productos WHERE artista_id = ?::uuid AND activo = TRUE ORDER BY creado_en DESC"
     );
     $stmtP->execute([$artista['id']]);
     $productos = $stmtP->fetchAll();
 
+    // Determina si el usuario que visita es el dueño del perfil — cambia la UI (editar vs. comprar)
     $esDueno = $user && isset($_SESSION['user_id']) && $artista['usuario_id'] === $_SESSION['user_id'];
 
+    // El dueño no verificado es redirigido al listado con un aviso en lugar de ver un perfil incompleto
     if ($esDueno && !$artista['verificado']) {
         $_SESSION['_flash_warn'] = 'Tu perfil aún no ha sido verificado. Un administrador lo revisará pronto.';
         header('Location: ' . $base . '/src/artistas/artistas.php');
         exit;
     }
 
+    // Carga el carrito solo para visitantes (no el dueño) para mostrar qué productos ya tienen
     $perfilCarritoItems = [];
     $perfilCarritoTotal = 0;
     if ($user && !$esDueno) {
@@ -69,14 +78,17 @@ try {
     }
 
 } catch (PDOException $e) {
-    $artista  = null;
+    $artista   = null;
     $productos = [];
-    $dbError  = $e->getMessage();
+    $dbError   = $e->getMessage();
 }
 
+// El title de la página usa el nombre del artista para buen SEO
 $pageTitle = isset($artista) ? htmlspecialchars($artista['nombre']) . ' — SurArte Andino' : 'Perfil Artista';
 $pageId    = 'artistas';
 require_once '../../_layout/head.php';
+
+
 
 $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖',
              'pintura'=>'🖼️','escultura'=>'🗿','fotografia'=>'📷','teatro'=>'🎭','otro'=>'✨'];
@@ -128,6 +140,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
       <?php endif; ?>
 
       <div class="perfil-social">
+        <?php /* Redes sociales — solo se renderizan si el artista las completó en su perfil */ ?>
         <?php if (!empty($artista['instagram'])): ?>
           <a href="https://instagram.com/<?= htmlspecialchars(ltrim($artista['instagram'],'@')) ?>" target="_blank" style="font-size:.78rem;font-weight:600;color:#3d2b10">📷 Instagram</a>
         <?php endif; ?>
@@ -167,6 +180,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
       ?>
       <div class="product-card" data-cat="<?= htmlspecialchars($p['categoria'] ?? '') ?>" style="cursor:pointer" onclick="window.location='<?= $base ?>/src/tienda/producto.php?id=<?= urlencode($p['id']) ?>'">
         <div class="product-img-wrap">
+          <?php /* Mismo filtro de imagen que en tienda.php — evita URLs de placeholder */ ?>
           <?php if (!empty($p['imagen_url']) && str_starts_with($p['imagen_url'],'http') && !str_contains($p['imagen_url'],'example.com')): ?>
             <img class="product-img-real" src="<?= htmlspecialchars($p['imagen_url']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>" loading="lazy">
           <?php else: ?>
@@ -181,6 +195,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
           <?php endif; ?>
           <div class="product-footer">
             <div class="product-price">$<?= number_format((float)$p['precio'],0,',','.') ?></div>
+            <?php /* Visitante logueado: botón +  |  Dueño: botón editar  |  No logueado: enlace login */ ?>
             <?php if ($user && !$esDueno): ?>
               <button class="btn-add"
                 data-id="<?= htmlspecialchars($p['id']) ?>"

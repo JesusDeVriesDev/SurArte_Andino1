@@ -11,6 +11,7 @@ if (!$user || $user['rol'] !== 'admin') {
 }
 
 try {
+    // KPIs del mes en curso — se calculan con DATE_TRUNC para siempre partir del 1ro del mes
     $resumen = [
         'nuevosUsuariosMes' => db()->query(
             "SELECT COUNT(*) FROM usuarios WHERE creado_en >= DATE_TRUNC('month', NOW())"
@@ -25,6 +26,8 @@ try {
             "SELECT COUNT(*) FROM productos WHERE activo = TRUE AND creado_en >= DATE_TRUNC('month', NOW())"
         )->fetchColumn(),
     ];
+
+    // Datos para el gráfico de barras de registros mensuales (últimos 6 meses)
     $registrosMes = db()->query(
         "SELECT TO_CHAR(DATE_TRUNC('month', creado_en), 'Mon YY') AS mes,
                 COUNT(*) AS total
@@ -34,6 +37,7 @@ try {
          ORDER BY DATE_TRUNC('month', creado_en)"
     )->fetchAll();
 
+    // Distribución de eventos por categoría para la gráfica de categorías
     $eventosPorCat = db()->query(
         "SELECT categoria, COUNT(*) AS total
          FROM eventos WHERE activo = TRUE AND categoria IS NOT NULL
@@ -46,6 +50,7 @@ try {
          GROUP BY categoria ORDER BY total DESC"
     )->fetchAll();
 
+    // Top 5 municipios con más artistas registrados
     $artistasMunicipio = db()->query(
         "SELECT municipio, COUNT(*) AS total
          FROM artistas WHERE municipio IS NOT NULL
@@ -58,8 +63,6 @@ try {
     $dbError = $e->getMessage();
 }
 
-$catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨',
-             'pintura'=>'🖼️','escultura'=>'🗿','fotografia'=>'📷','teatro'=>'🎭'];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -166,6 +169,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
         <div><div class="eyebrow" style="margin-bottom:4px">Tendencia</div><h2 class="panel-title">Usuarios últimos 6 meses</h2></div>
       </div>
       <div class="bar-chart">
+        <?php /* Barras proporcionales al máximo del período — ancho calculado en el foreach */ ?>
         <?php if (!empty($registrosMes)):
           $maxVal = max(array_column($registrosMes, 'total')) ?: 1;
           foreach ($registrosMes as $r):
@@ -186,6 +190,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
         <div><div class="eyebrow" style="margin-bottom:4px">Geografía</div><h2 class="panel-title">Artistas por municipio</h2></div>
       </div>
       <div class="bar-chart">
+        <?php /* Top 5 municipios con más artistas para ver concentración geográfica */ ?>
         <?php if (!empty($artistasMunicipio)):
           $maxM = max(array_column($artistasMunicipio, 'total')) ?: 1;
           foreach ($artistasMunicipio as $m):

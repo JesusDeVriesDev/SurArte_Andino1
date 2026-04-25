@@ -1,24 +1,28 @@
 <?php
 ob_start();
+// Título y sección activa para el nav
 $pageTitle = 'Registro de Artista';
 $pageId    = 'artistas';
 require_once '../../_layout/head.php';
 require_once '../../../config/db.php';
 
-// Redirigir si ya es artista
+// Si el usuario ya es artista no necesita este formulario — lo mandamos a su perfil directamente
 if ($user && $user['rol'] === 'artista') {
     header('Location: ' . $base . '/src/artistas/perfil/index.php');
     exit;
 }
+// Un visitante no autenticado tampoco puede registrarse como artista sin cuenta
 if (!$user) {
     header('Location: ' . $base . '/src/auth/login/index.php');
     exit;
 }
 
+// Mensajes flash del intento anterior de envío
 $error = $_SESSION['reg_artista_error'] ?? null;
 $ok    = $_SESSION['reg_artista_ok']    ?? null;
 unset($_SESSION['reg_artista_error'], $_SESSION['reg_artista_ok']);
 
+// Lista de disciplinas disponibles en el select del formulario
 $disciplinas = ['Barniz de Pasto','Cerámica','Pintura','Escultura','Música Andina','Danza','Literatura',
                 'Fotografía','Teatro','Artesanía','Tejido','Orfebrería','Otro'];
 ?>

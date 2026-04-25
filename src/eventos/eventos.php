@@ -1,4 +1,5 @@
 <?php
+// Solo eventos próximos y activos — los pasados no aparecen en el listado público
 $pageTitle = 'Eventos';
 $pageId    = 'eventos';
 require_once '../_layout/head.php';
@@ -13,6 +14,7 @@ try {
          ORDER BY fecha_inicio ASC"
     )->fetchAll();
 
+    // Categorías únicas presentes en los eventos próximos para los filtros de la vista
     $categorias = db()->query(
         "SELECT DISTINCT categoria FROM eventos
          WHERE activo = TRUE AND fecha_inicio >= NOW() AND categoria IS NOT NULL
@@ -24,6 +26,7 @@ try {
     $dbError = $e->getMessage();
 }
 
+// Íconos y etiquetas por categoría para las tarjetas y los filtros
 $catIcons  = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨'];
 $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danza'=>'Danza','literatura'=>'Literatura','otro'=>'Otro'];
 ?>

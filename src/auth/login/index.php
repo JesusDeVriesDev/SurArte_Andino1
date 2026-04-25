@@ -1,16 +1,21 @@
 <?php
 session_start();
 
+// Detecta el prefijo de instalación para construir rutas relativas correctamente
+// tanto en localhost/SurArte_Andino como en cualquier subdirectorio de producción
 $script = $_SERVER['SCRIPT_NAME'] ?? '';
 $base   = '';
-if (preg_match('#(/SurArte_Andino)#i', $script, $m)) {
+if (preg_match('#(/SurArte_Andino[^/]*)#i', $script, $m)) {
     $base = $m[1];
 }
 
-$error = $_SESSION['login_error'] ?? '';
+// Recupera el error y el correo guardados por login.php tras un intento fallido,
+// luego los limpia de sesión para que no persistan si el usuario recarga la página
+$error      = $_SESSION['login_error'] ?? '';
 $savedEmail = $_SESSION['login_email'] ?? '';
 unset($_SESSION['login_error'], $_SESSION['login_email']);
 
+// Si el usuario ya tiene sesión activa no tiene sentido mostrarle el login — lo manda directo al inicio
 if (!empty($_SESSION['user_id'])) {
     header('Location: ' . $base . '/src/inicio/inicio.php');
     exit;
@@ -19,11 +24,19 @@ if (!empty($_SESSION['user_id'])) {
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Iniciar sesión — SurArte Andino</title>
+
+  <!-- Estilos base del proyecto y estilos específicos de la vista de login -->
   <link rel="stylesheet" href="<?= $base ?>/public/css/main.css"/>
   <link rel="stylesheet" href="<?= $base ?>/src/auth/login/login.css"/>
+
+  <!-- CSS de intro.js necesario para el tour guiado de esta página -->
+  <link rel="stylesheet" href="https://unpkg.com/intro.js/introjs.css">
+
   <style>
+    /* Bloque de error que viene del servidor (PHP) — diferente al error inline de JS */
     .auth-error {
       background: #fef2f2;
       border: 1px solid #fca5a5;
@@ -37,12 +50,16 @@ if (!empty($_SESSION['user_id'])) {
       gap: .5rem;
     }
     .auth-error svg { flex-shrink: 0; }
+    /* Clase de borde rojo para inputs — la agrega JS al detectar un error de validación */
     .input--error { border-color: #f87171 !important; }
   </style>
 </head>
 <body class="auth-body">
 <div class="auth-layout">
 
+  <!-- ─── Panel visual izquierdo ─────────────────────────────────────────────
+       Solo decorativo — presenta la marca y los beneficios de tener cuenta.
+       Se oculta en móvil mediante media query en login.css. -->
   <div class="auth-visual">
     <div class="auth-visual-content">
       <div class="auth-brand">SurArte<br><em>Andino</em></div>
@@ -65,13 +82,17 @@ if (!empty($_SESSION['user_id'])) {
     </div>
   </div>
 
+  <!-- ─── Panel del formulario ───────────────────────────────────────────────── -->
   <div class="auth-panel">
     <div class="auth-form-wrap">
+
       <div class="auth-header">
         <div class="eyebrow">Bienvenido de vuelta</div>
         <h1 class="auth-title">Iniciar <em>sesión</em></h1>
       </div>
 
+      <!-- Mensaje de error del servidor — solo se renderiza si login.php dejó un error en sesión.
+           JS lo hace desaparecer automáticamente después de 5 segundos. -->
       <?php if ($error): ?>
         <div class="auth-error" id="serverError">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -81,21 +102,29 @@ if (!empty($_SESSION['user_id'])) {
         </div>
       <?php endif; ?>
 
+      <!-- novalidate desactiva la validación nativa del navegador para usar la validación
+           personalizada de login.js y tener control total sobre los mensajes de error -->
       <form id="loginForm" action="login.php" method="post" novalidate>
+
         <div class="input-group">
           <label class="input-label" for="email">Correo electrónico</label>
+          <!-- Si el login falló, se repobla el campo con el correo que el usuario ingresó
+               para que no tenga que volver a escribirlo -->
           <input class="input <?php echo $error ? 'input--error' : ''; ?>"
                  type="email" id="email" name="email"
                  placeholder="tu@correo.com" required
                  value="<?php echo htmlspecialchars($savedEmail); ?>"/>
+          <!-- Elemento siempre presente para que el layout no salte al aparecer el error -->
           <span class="input-error-msg" id="emailErr"></span>
         </div>
 
         <div class="input-group" style="margin-top:1.2rem">
           <label class="input-label" for="password">Contraseña</label>
+          <!-- Wrapper relativo necesario para posicionar el botón de toggle sobre el input -->
           <div style="position:relative">
             <input class="input" type="password" id="password" name="password"
                    placeholder="••••••••" required/>
+            <!-- Botón de mostrar/ocultar contraseña — el SVG cambia dinámicamente en login.js -->
             <button type="button" id="togglePass" class="pass-toggle"
                     style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(26,18,8,.65);padding:0;transition:color .2s;display:flex;align-items:center"
                     onmouseover="this.style.color='#0d0902'" onmouseout="this.style.color='rgba(26,18,8,.65)'">
@@ -110,25 +139,30 @@ if (!empty($_SESSION['user_id'])) {
           <span class="input-error-msg" id="passErr"></span>
         </div>
 
+        <!-- Fila de opciones: checkbox de recordarme y enlace de recuperación -->
         <div class="auth-meta">
           <label class="auth-check">
             <input type="checkbox" id="remember"/> Recordarme
           </label>
+          <!-- La recuperación de contraseña aún no está implementada — muestra un toast de aviso -->
           <a class="auth-link" onclick="Toast.show('Recuperar contraseña próximamente')">
             ¿Olvidaste tu contraseña?
           </a>
         </div>
 
+        <!-- Botón de submit — JS lo deshabilita al enviar para evitar doble clic -->
         <button type="submit" class="btn btn-primary"
                 style="width:100%;margin-top:1.5rem;justify-content:center" id="loginBtn">
           Iniciar sesión
         </button>
       </form>
 
+      <!-- Separador y botón de Google OAuth — pendiente de implementación -->
       <div class="auth-divider"><span>o continúa con</span></div>
       <div class="social-auth-row">
         <button type="button" class="btn btn-outline social-auth-btn"
                 onclick="Toast.show('Google OAuth próximamente')">
+          <!-- SVG del logo de Google con los 4 colores oficiales -->
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -139,15 +173,21 @@ if (!empty($_SESSION['user_id'])) {
         </button>
       </div>
 
+      <!-- Enlace al registro para usuarios que aún no tienen cuenta -->
       <p class="auth-footer-txt">
         ¿No tienes cuenta?
-        <a href="<?= $base ?>/src/auth/register/index.php" class="auth-link">Regístrate aquí</a>
+        <a href="<?= $base ?>/src/auth/register/index.php" id="lg-link" class="auth-link">Regístrate aquí</a>
       </p>
     </div>
   </div>
 </div>
 
+<!-- Contenedor del toast — el texto y la visibilidad los controla Toast.show() en login.js -->
 <div id="toast"><span class="toast-icon"></span><span class="toast-msg"></span></div>
+
+<!-- login.js primero para que window.Toast esté disponible cuando cargue help.js -->
 <script src="<?= $base ?>/src/auth/login/login.js"></script>
+<script src="https://unpkg.com/intro.js/intro.js"></script>
+<script src="<?= $base ?>/src/help.js"></script>
 </body>
 </html>

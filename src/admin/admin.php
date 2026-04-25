@@ -5,25 +5,29 @@ $pageId    = 'admin';
 require_once '../_layout/head.php';
 require_once '../../config/db.php';
 
+// Si no es admin, redirige al login con el parámetro redirect para volver después de autenticarse
 if (!$user || $user['rol'] !== 'admin') {
     header('Location: ' . $base . '/src/auth/login/index.php?redirect=admin');
     exit;
 }
 
 try {
+    // Contadores de las tarjetas de resumen del dashboard
     $stats = [
-        'usuarios'  => db()->query("SELECT COUNT(*) FROM usuarios")->fetchColumn(),
-        'artistas'  => db()->query("SELECT COUNT(*) FROM artistas")->fetchColumn(),
-        'eventos'   => db()->query("SELECT COUNT(*) FROM eventos WHERE activo = TRUE")->fetchColumn(),
-        'productos' => db()->query("SELECT COUNT(*) FROM productos WHERE activo = TRUE")->fetchColumn(),
-        'pendientes'=> db()->query("SELECT COUNT(*) FROM artistas WHERE verificado = FALSE")->fetchColumn(),
-        'tickets'   => 0, // tabla tickets existe en schema.sql pero puede no estar migrada
+        'usuarios'   => db()->query("SELECT COUNT(*) FROM usuarios")->fetchColumn(),
+        'artistas'   => db()->query("SELECT COUNT(*) FROM artistas")->fetchColumn(),
+        'eventos'    => db()->query("SELECT COUNT(*) FROM eventos WHERE activo = TRUE")->fetchColumn(),
+        'productos'  => db()->query("SELECT COUNT(*) FROM productos WHERE activo = TRUE")->fetchColumn(),
+        'pendientes' => db()->query("SELECT COUNT(*) FROM artistas WHERE verificado = FALSE")->fetchColumn(),
+        'tickets'    => 0, // la tabla tickets existe en schema.sql pero puede no estar migrada aún
     ];
 
+    // Últimos 6 usuarios registrados para el panel de actividad reciente
     $ultimosUsuarios = db()->query(
         "SELECT id, nombre, email, rol, creado_en FROM usuarios ORDER BY creado_en DESC LIMIT 6"
     )->fetchAll();
 
+    // Artistas pendientes de verificación — los más antiguos primero para atenderlos en orden
     $artistasPendientes = db()->query(
         "SELECT id, nombre, disciplina, municipio, creado_en
          FROM artistas WHERE verificado = FALSE ORDER BY creado_en DESC LIMIT 5"
@@ -46,8 +50,9 @@ try {
     $dbError = $e->getMessage();
 }
 
-$rolColors  = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge-gold','visitante'=>'badge-muted'];
-$catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨'];
+// Mapa de colores de badge por rol para la tabla de usuarios
+$rolColors = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge-gold','visitante'=>'badge-muted'];
+$catIcons  = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨'];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -123,6 +128,8 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
     </div>
   </div>
 
+  <!-- Tarjetas de acceso rápido: ícono, contador, etiqueta, badge y URL destino.
+       Cambiar el orden del array cambia el orden visual sin tocar el HTML. -->
   <div class="stats-grid">
     <?php
     $statsData = [
@@ -155,6 +162,7 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
           </div>
           <a href="<?= $base ?>/src/admin/usuarios.php" class="panel-link">Ver todos →</a>
         </div>
+        <?php /* Últimos 6 registros — útil para detectar actividad inusual */ ?>
         <?php if (!empty($ultimosUsuarios)): ?>
         <div class="user-list">
           <?php foreach ($ultimosUsuarios as $u): ?>
@@ -181,6 +189,7 @@ $catIcons   = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'�
           </div>
           <a href="<?= $base ?>/src/admin/artistas.php" class="panel-link">Gestionar →</a>
         </div>
+        <?php /* Pendientes ordenados por antigüedad — el más viejo es el más urgente */ ?>
         <?php if (!empty($artistasPendientes)): ?>
         <div class="user-list">
           <?php foreach ($artistasPendientes as $a): ?>
