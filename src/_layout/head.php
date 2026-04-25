@@ -1,18 +1,30 @@
 <?php
+// Inicia la sesión solo si no hay una activa — este archivo se incluye en todas las páginas,
+// por lo que podría llamarse cuando la sesión ya existe
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+// Cada página que incluya head.php puede definir $pageTitle y $pageId antes del include.
+// Si no los define, se usan estos valores por defecto para no romper el título ni la nav activa.
 $pageTitle = $pageTitle ?? 'Inicio';
 $pageId    = $pageId    ?? 'inicio';
-$user      = isset($_SESSION['user_id'])
-             ? ['nombre' => $_SESSION['nombre'], 'rol' => $_SESSION['rol']]
-             : null;
 
+// Construye el objeto de usuario para decidir qué mostrar en la navbar (botones de rol, carrito, etc.)
+$user = isset($_SESSION['user_id'])
+        ? ['nombre' => $_SESSION['nombre'], 'rol' => $_SESSION['rol']]
+        : null;
+
+// Detecta el prefijo de la instalación a partir de la URL del script.
+// Esto permite que los hrefs funcionen tanto en desarrollo local (ej: /SurArte_Andino_dev)
+// como en producción sin tener que hardcodear la ruta base en cada archivo.
 $script = $_SERVER['SCRIPT_NAME'] ?? '';
 $base   = '';
 if (preg_match('#(/SurArte_Andino[^/]*)#i', $script, $m)) {
     $base = $m[1];
 }
 
+// Definición centralizada de los ítems del menú de navegación principal.
+// Agregar o quitar una sección del sitio solo requiere modificar este array;
+// el HTML del topbar y del menú móvil se generan automáticamente a partir de él.
 $NAV = [
     ['id'=>'inicio',    'icon'=>'🏔️', 'label'=>'Inicio',    'href'=>$base.'/src/inicio/inicio.php'],
     ['id'=>'artistas',  'icon'=>'🎨', 'label'=>'Artistas',  'href'=>$base.'/src/artistas/artistas.php'],
@@ -21,9 +33,12 @@ $NAV = [
     ['id'=>'comunidad', 'icon'=>'🤝', 'label'=>'Comunidad', 'href'=>$base.'/src/comunidad/comunidad.php'],
 ];
 
-// Estado verificado del artista — leído de $_SESSION para no hacer consulta en cada página
+// Estado de verificación del artista — se lee de sesión para evitar una consulta extra a la BD
+// en cada carga de página. Se actualiza en login.php cada vez que el usuario inicia sesión.
 $artistaVerificado = $_SESSION['artista_verificado'] ?? false;
-// Contador de carrito — leído de $_SESSION, actualizado por JS tras cada acción
+
+// Contador del carrito leído de sesión — JS lo actualiza con updateNavCartBadge() tras cada acción
+// (agregar, eliminar, vaciar) sin necesidad de recargar la página.
 $navCartCount = (int)($_SESSION['carrito_count'] ?? 0);
 ?>
 <!DOCTYPE html>
@@ -31,261 +46,49 @@ $navCartCount = (int)($_SESSION['carrito_count'] ?? 0);
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- El título de la pestaña combina el nombre de la página con la marca del sitio -->
 <title><?= htmlspecialchars($pageTitle) ?> — SurArte Andino</title>
+
+<!-- Fuentes del sistema de diseño: Playfair Display (títulos), Cormorant Garamond (cuerpo), DM Mono (etiquetas/código) -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
-<style>
-:root{
-  --gold:#C9922A;--gold-lt:#E8B84B;--gold-pale:#F5E6C8;
-  --ink:#1A1208;--ink-mid:#3D2B10;
-  --clay:#8B3A1C;--clay-lt:#B5552E;
-  --sky:#1D4E6B;--sky-lt:#2E7AA8;
-  --cream:#FAF5EC;--cream-dk:#EDE4D0;--white:#FFFEF9;
-  --ok:#22c55e;--err:#ef4444;
-  --ff-d:'Playfair Display',Georgia,serif;
-  --ff-b:'Cormorant Garamond',Georgia,serif;
-  --ff-m:'DM Mono',monospace;
-  --r:8px;--r-lg:16px;--r-full:9999px;
-  --sh:0 4px 24px rgba(26,18,8,.12);
-  --sh-lg:0 16px 56px rgba(26,18,8,.22);
-  --sh-gold:0 8px 28px rgba(201,146,42,.35);
-  --ease:cubic-bezier(.4,0,.2,1);
-  --dur:.28s;
-  --nav-h:72px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--ff-b);font-size:16px;background:var(--cream);color:var(--ink);min-height:100vh}
-a{text-decoration:none;color:inherit}
-ul{list-style:none}
-button{cursor:pointer;border:none;background:none;font:inherit}
-img{max-width:100%;display:block}
-::selection{background:var(--gold);color:var(--ink)}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
 
-#topbar{
-  position:sticky;top:0;z-index:500;
-  height:var(--nav-h);
-  background:rgba(20,13,5,.98);
-  backdrop-filter:blur(24px);
-  border-bottom:1px solid rgba(201,146,42,.2);
-  display:flex;align-items:center;
-  padding:0 clamp(16px,3vw,36px);
-  gap:20px;
-}
-.tb-logo{
-  font-family:var(--ff-d);font-size:1.3rem;font-weight:900;
-  color:var(--gold);letter-spacing:-.02em;white-space:nowrap;
-  flex-shrink:0;
-}
-.tb-logo span{font-style:italic;color:rgba(201,146,42,.65)}
+<!-- Estilos globales del sistema: variables, reset, topbar, componentes y utilidades -->
+<link rel="stylesheet" href="<?= $base ?>/src/_layout/head.css"/>
 
-/* Nav con scroll horizontal en desktop cuando no cabe */
-.tb-nav{
-  display:flex;align-items:center;gap:2px;
-  flex:1;min-width:0;
-  overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;
-}
-.tb-nav::-webkit-scrollbar{display:none}
-
-.tb-link{
-  display:flex;align-items:center;gap:6px;
-  padding:8px 14px;
-  border-radius:var(--r-full);
-  font-family:var(--ff-m);font-size:.75rem;
-  font-weight:500;
-  letter-spacing:.08em;text-transform:uppercase;
-  color:rgba(250,245,236,.85);
-  white-space:nowrap;flex-shrink:0;
-  transition:color var(--dur),background var(--dur);
-}
-.tb-link:hover{color:#fff;background:rgba(250,245,236,.1)}
-.tb-link.active{
-  color:var(--gold);
-  background:rgba(201,146,42,.15);
-  border:1px solid rgba(201,146,42,.25);
-}
-.tb-link .ti{font-size:1rem}
-
-.tb-right{
-  margin-left:auto;flex-shrink:0;
-  display:flex;align-items:center;gap:4px;
-  padding-left:16px;
-}
-.tb-user{
-  font-family:var(--ff-m);font-size:.76rem;
-  letter-spacing:.06em;color:rgba(250,245,236,.85);
-  white-space:nowrap;padding:0 6px;
-}
-.btn-sm{
-  padding:7px 13px;border-radius:var(--r);
-  font-family:var(--ff-m);font-size:.71rem;
-  font-weight:500;
-  letter-spacing:.07em;text-transform:uppercase;
-  transition:all .22s;white-space:nowrap;
-}
-.btn-gold-sm{
-  background:var(--gold);color:var(--ink);
-  border:none;
-}
-.btn-gold-sm:hover{background:var(--gold-lt);transform:translateY(-1px)}
-.btn-ghost-sm{
-  color:rgba(250,245,236,.85);
-  border:none;
-  background:rgba(250,245,236,.06);
-}
-.btn-ghost-sm:hover{
-  color:#fff;
-  background:rgba(250,245,236,.12);
-}
-.tb-cart-btn{
-  position:relative;display:inline-flex;align-items:center;gap:6px;
-  padding:7px 13px;border-radius:var(--r);
-  font-family:var(--ff-m);font-size:.71rem;
-  font-weight:500;
-  letter-spacing:.07em;text-transform:uppercase;
-  color:rgba(250,245,236,.85);
-  border:none;
-  background:rgba(250,245,236,.06);
-  transition:all .22s;text-decoration:none;white-space:nowrap;
-}
-.tb-cart-btn:hover{color:#fff;background:rgba(250,245,236,.12)}
-.tb-cart-badge{
-  background:var(--gold);color:var(--ink);
-  border-radius:50%;width:18px;height:18px;
-  font-size:.55rem;font-weight:700;
-  display:inline-flex;align-items:center;justify-content:center;
-  font-family:var(--ff-m);
-}
-
-/* ── Burger ──────────────────────────────────────────────
-   Aparece en <=1100px (cubre 150% zoom en pantallas 1280-1440px)
-   Los botones de rol (.tb-rol-btn) y auth (.tb-auth-btn) se ocultan al mismo tiempo
-   El nombre de usuario se oculta antes (<=1000px)
-   ──────────────────────────────────────────────────────── */
-.tb-burger{display:none;flex-direction:column;gap:5px;padding:8px;flex-shrink:0}
-.tb-burger span{width:22px;height:2px;background:var(--cream);border-radius:2px;transition:transform .3s,opacity .3s}
-.tb-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.tb-burger.open span:nth-child(2){opacity:0}
-.tb-burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-
-/* Nombre usuario desaparece primero para ganar espacio */
-@media(max-width:1000px){
-  .tb-user{display:none}
-}
-
-/* Burger + ocultar nav links + ocultar botones de rol y auth */
-@media(max-width:1100px){
-  .tb-burger{display:flex}
-  .tb-nav{display:none}
-  .tb-rol-btn, .tb-auth-btn{display:none}
-  .btn-sm{padding:6px 9px;font-size:.62rem}
-  .tb-right{gap:3px;padding-left:8px}
-  #topbar{gap:8px;padding:0 12px}
-}
-
-#mobileMenu{
-  display:none;position:fixed;
-  inset:var(--nav-h) 0 0;
-  background:rgba(15,10,4,.99);
-  backdrop-filter:blur(20px);
-  z-index:490;
-  flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  transform:translateX(-100%);transition:transform .38s var(--ease);
-  overflow-y:auto;
-}
-#mobileMenu.open{transform:translateX(0)}
-.mm-link{
-  width:85%;max-width:320px;
-  padding:15px 24px;border-radius:var(--r-lg);
-  display:flex;align-items:center;gap:14px;
-  font-family:var(--ff-d);font-size:1.15rem;font-weight:700;
-  color:rgba(250,245,236,.8);
-  transition:background .2s,color .2s;
-  border:1px solid transparent;
-  box-sizing:border-box;background:none;
-}
-.mm-link:hover,.mm-link.active{
-  background:rgba(201,146,42,.1);
-  color:var(--gold);
-  border-color:rgba(201,146,42,.2);
-}
-.mm-icon{font-size:1.4rem;width:32px;text-align:center;flex-shrink:0}
-
-/* El main contiene el overflow — no html/body para no romper position:fixed */
-main{min-height:calc(100vh - var(--nav-h));padding:clamp(32px,5vw,60px) clamp(16px,5vw,60px) 80px;max-width:1200px;margin:0 auto;overflow-x:hidden;}
-.eyebrow{font-family:var(--ff-m);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--clay);display:flex;align-items:center;gap:9px;margin-bottom:10px}
-.eyebrow::before{content:'';width:20px;height:1px;background:currentColor}
-.page-h1{font-family:var(--ff-d);font-size:clamp(2.4rem,5vw,4.2rem);font-weight:900;line-height:.95;letter-spacing:-.03em;color:var(--ink);margin-bottom:16px}
-.page-h1 em{font-style:italic;color:var(--clay)}
-.page-lead{font-size:clamp(.95rem,1.3vw,1.1rem);font-weight:300;color:rgba(26,18,8,.52);max-width:520px;line-height:1.82;margin-bottom:36px}
-.gold-line{width:42px;height:3px;background:var(--gold);border-radius:2px;margin:20px 0}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--r);font-family:var(--ff-m);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;transition:all var(--dur) var(--ease);border:none;cursor:pointer}
-.btn-gold{background:var(--gold);color:var(--ink)}.btn-gold:hover{background:var(--gold-lt);transform:translateY(-2px);box-shadow:var(--sh-gold)}
-.btn-outline{background:transparent;border:1px solid rgba(26,18,8,.2);color:var(--ink)}.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
-.btn-danger{background:var(--err);color:#fff}.btn-danger:hover{opacity:.85}
-.btn:disabled{opacity:.45;cursor:not-allowed;transform:none !important}
-.card{background:var(--white,#FFFEF9);border:1px solid var(--cream-dk);border-radius:var(--r-lg);overflow:hidden;transition:box-shadow var(--dur),transform var(--dur),border-color var(--dur)}
-.card:hover{box-shadow:var(--sh-lg);transform:translateY(-4px)}
-.card-body{padding:20px 22px}
-.badge{display:inline-block;padding:3px 10px;border-radius:var(--r-full);font-family:var(--ff-m);font-size:.52rem;letter-spacing:.09em;text-transform:uppercase}
-.badge-gold{background:rgba(201,146,42,.12);color:var(--gold)}
-.badge-clay{background:rgba(139,58,28,.12);color:var(--clay)}
-.badge-sky{background:rgba(29,78,107,.12);color:var(--sky)}
-.badge-green{background:rgba(34,197,94,.1);color:#16a34a}
-.badge-muted{background:rgba(26,18,8,.06);color:rgba(26,18,8,.45)}
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.field-label{font-family:var(--ff-m);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:rgba(26,18,8,.52)}
-.field-input,.field-select,.field-textarea{background:var(--cream-dk);border:1.5px solid transparent;border-radius:var(--r);padding:10px 13px;font-family:var(--ff-b);font-size:.97rem;color:var(--ink);transition:border-color .22s;width:100%}
-.field-input:focus,.field-select:focus,.field-textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,146,42,.1)}
-.field-input::placeholder,.field-textarea::placeholder{color:rgba(26,18,8,.27)}
-.field-input.err{border-color:var(--err)}.field-err{font-size:.73rem;color:var(--err);min-height:15px}
-.field-textarea{resize:vertical;min-height:100px}
-#toast{position:fixed;bottom:22px;right:22px;z-index:9000;background:rgba(26,18,8,.96);border:1px solid rgba(201,146,42,.25);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:9px;max-width:320px;transform:translateY(80px);opacity:0;transition:transform .42s var(--ease),opacity .42s;pointer-events:none}
-#toast.show{transform:translateY(0);opacity:1}
-.toast-icon{font-size:.9rem}.toast-msg{font-size:.88rem;color:var(--cream);font-weight:300}
-.alert{padding:11px 16px;border-radius:var(--r);margin-bottom:18px;font-size:.9rem;font-weight:300}
-.alert-err{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);color:#b91c1c}
-.alert-ok{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18);color:#15803d}
-.alert-info{background:rgba(29,78,107,.07);border:1px solid rgba(29,78,107,.18);color:var(--sky)}
-.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.grid-auto{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
-.flex{display:flex}.flex-col{display:flex;flex-direction:column}
-.items-center{align-items:center}.justify-between{justify-content:space-between}
-.gap-2{gap:8px}.gap-4{gap:16px}.gap-6{gap:24px}
-.mt-6{margin-top:24px}.mt-8{margin-top:32px}.mt-12{margin-top:48px}
-.text-center{text-align:center}
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:80px 20px;text-align:center;color:rgba(26,18,8,.35)}
-.empty-icon{font-size:2.8rem}.empty p{font-size:1.05rem;font-weight:300}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.1;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-/* nav/burger handled above */.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}@media(max-width:900px){.grid-3{grid-template-columns:repeat(2,1fr)}.grid-4{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.grid-2,.grid-3,.grid-4,.grid-auto{grid-template-columns:1fr}}
-</style>
+<!-- CSS de intro.js para los tours de onboarding -->
+<link rel="stylesheet" href="https://unpkg.com/intro.js/introjs.css">
 </head>
 <body>
 
+<!-- ─── Topbar ──────────────────────────────────────────────────────────────── -->
 <header id="topbar">
+  <!-- Logo que lleva siempre al index raíz -->
   <a class="tb-logo" href="<?= $base ?>/index.php">SurArte <span>Andino</span></a>
 
+  <!-- Navegación principal — generada desde el array $NAV.
+       La clase 'active' se asigna comparando el id del ítem con $pageId de la página actual. -->
   <nav class="tb-nav">
     <?php foreach ($NAV as $n): ?>
-      <a class="tb-link <?= $n['id'] === $pageId ? 'active' : '' ?>" href="<?= $n['href'] ?>">
+      <a id="<?= $n['id'] ?>" class="tb-link <?= $n['id'] === $pageId ? 'active' : '' ?>" href="<?= $n['href'] ?>">
         <span class="ti"><?= $n['icon'] ?></span><?= $n['label'] ?>
       </a>
     <?php endforeach; ?>
   </nav>
 
+  <!-- Zona derecha: nombre de usuario, botones de rol, carrito y logout -->
   <div class="tb-right">
     <?php if ($user): ?>
+      <!-- Muestra solo el primer nombre para no saturar la navbar en pantallas medianas -->
       <span class="tb-user"><?= htmlspecialchars(explode(' ', $user['nombre'])[0]) ?></span>
 
-      <!-- Botones de rol: visibles en PC, ocultos cuando aparece el burger -->
+      <!-- Botón de admin — solo visible si el usuario tiene rol 'admin' -->
       <?php if ($user['rol'] === 'admin'): ?>
         <a class="btn-sm btn-ghost-sm tb-rol-btn" href="<?= $base ?>/src/admin/admin.php">⚙️ Admin</a>
       <?php endif; ?>
 
+      <!-- Botón de perfil de artista — si no está verificado, el clic muestra un toast de aviso
+           en lugar de redirigir, para no llevar al artista a una página incompleta -->
       <?php if ($user['rol'] === 'artista'): ?>
         <?php if ($artistaVerificado): ?>
           <a class="btn-sm btn-ghost-sm tb-rol-btn" href="<?= $base ?>/src/artistas/perfil/index.php">🎨 Mi perfil</a>
@@ -297,9 +100,12 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
         <?php endif; ?>
       <?php endif; ?>
 
+      <!-- Enlace a la cuenta del usuario — disponible para todos los roles -->
       <a class="btn-sm btn-ghost-sm tb-rol-btn" href="<?= $base ?>/src/perfil/index.php">👤 Cuenta</a>
 
-      <!-- Carrito: siempre visible -->
+      <!-- Botón del carrito — siempre visible independientemente del rol.
+           El badge solo se renderiza si hay ítems; de lo contrario queda oculto con display:none
+           para que JS pueda mostrarlo sin recargar la página. -->
       <a class="tb-cart-btn" href="<?= $base ?>/src/tienda/tienda.php" id="navCartLink">
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
@@ -313,28 +119,35 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
       </a>
 
       <a class="btn-sm btn-ghost-sm" href="<?= $base ?>/src/auth/logout.php">Salir</a>
+
     <?php else: ?>
-      <!-- tb-auth-btn: visibles en PC, ocultos en móvil (van al menú hamburguesa) -->
+      <!-- Usuarios no autenticados ven los botones de login y registro.
+           Se ocultan en móvil (tb-auth-btn) y se muestran en el menú hamburguesa. -->
       <a class="btn-sm btn-ghost-sm tb-auth-btn" href="<?= $base ?>/src/auth/login/index.php">Iniciar sesión</a>
       <a class="btn-sm btn-gold-sm  tb-auth-btn"  href="<?= $base ?>/src/auth/register/index.php">Registrarse</a>
     <?php endif; ?>
   </div>
 
+  <!-- Botón hamburguesa — solo visible en ≤1100px, controla el menú móvil vía JS -->
   <button class="tb-burger" id="tbBurger" aria-label="Menú"><span></span><span></span><span></span></button>
 </header>
 
+
+<!-- ─── Menú móvil (overlay) ────────────────────────────────────────────────── -->
+<!-- Se activa con la clase .open que JS agrega/quita al hacer clic en el burger -->
 <div id="mobileMenu">
-  <!-- Navegación principal -->
+
+  <!-- Los mismos ítems de navegación que el topbar, en formato de lista grande para touch -->
   <?php foreach ($NAV as $n): ?>
     <a class="mm-link <?= $n['id'] === $pageId ? 'active' : '' ?>" href="<?= $n['href'] ?>">
       <span class="mm-icon"><?= $n['icon'] ?></span><?= $n['label'] ?>
     </a>
   <?php endforeach; ?>
 
-  <!-- Separador -->
+  <!-- Separador visual entre nav y sección de cuenta -->
   <div style="width:85%;max-width:320px;height:1px;background:rgba(201,146,42,.15);margin:10px 0"></div>
 
-  <!-- Sección de cuenta (rol-dependiente) -->
+  <!-- Sección de cuenta en el menú móvil — replica la lógica de roles del topbar -->
   <?php if ($user): ?>
     <?php if ($user['rol'] === 'admin'): ?>
       <a class="mm-link" href="<?= $base ?>/src/admin/admin.php">
@@ -348,6 +161,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
           <span class="mm-icon">🎨</span>Mi perfil
         </a>
       <?php else: ?>
+        <!-- Cierra el menú móvil antes de mostrar el toast para que no quede abierto detrás -->
         <button class="mm-link" style="text-align:left"
           onclick="document.getElementById('mobileMenu').classList.remove('open');document.getElementById('tbBurger').classList.remove('open');toast('Aún no estás verificado. Un administrador revisará tu perfil pronto.','warn')">
           <span class="mm-icon">🎨</span>Mi perfil
@@ -358,8 +172,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
     <a class="mm-link" href="<?= $base ?>/src/perfil/index.php">
       <span class="mm-icon">👤</span>Mi cuenta
     </a>
+
   <?php else: ?>
-    <!-- Botones de auth en el menú móvil -->
+    <!-- Botones de auth en el menú móvil para usuarios no autenticados -->
     <a class="mm-link" href="<?= $base ?>/src/auth/login/index.php">
       <span class="mm-icon">🔑</span>Iniciar sesión
     </a>
@@ -369,29 +184,44 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;o
   <?php endif; ?>
 </div>
 
+
+<!-- Contenedor del toast — el contenido y la visibilidad los maneja la función toast() en JS -->
 <div id="toast"><span class="toast-icon"></span><span class="toast-msg"></span></div>
 
+
 <script>
+// Expone la ruta base al JS del cliente para que los scripts puedan construir URLs dinámicas
 window.APP_BASE = '<?= $base ?>';
+
+// ─── Menú hamburguesa ────────────────────────────────────────────────────────
+// Toggle del menú móvil: alterna la clase .open en el burger y en el overlay del menú
 const burger = document.getElementById('tbBurger');
 const menu   = document.getElementById('mobileMenu');
 burger.addEventListener('click', () => {
   burger.classList.toggle('open');
+  // Alterna entre flex y none en lugar de solo toggle de .open porque el menú
+  // necesita display:flex para centrar los ítems cuando está visible
   menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
   menu.classList.toggle('open');
 });
 
-let _tt;
+// ─── Función global de toast ─────────────────────────────────────────────────
+// Disponible en todas las páginas desde el momento en que head.php se carga.
+// type puede ser: 'ok', 'err', 'warn', 'info'
+let _tt; // Guarda el timeout para cancelarlo si se dispara otro toast antes de que el anterior desaparezca
 function toast(msg, type = 'ok') {
   const icons = { ok: '✅', err: '❌', warn: '⚠️', info: 'ℹ️' };
   document.querySelector('#toast .toast-icon').textContent = icons[type] || '✅';
   document.querySelector('#toast .toast-msg').textContent  = msg;
   document.getElementById('toast').classList.add('show');
   clearTimeout(_tt);
+  // El timeout de 3800ms debe coincidir con la transición CSS del toast para evitar parpadeos
   _tt = setTimeout(() => document.getElementById('toast').classList.remove('show'), 3800);
 }
 
-// Actualizar badge del carrito en navbar desde JS
+// ─── Actualización del badge del carrito ─────────────────────────────────────
+// Llamada por los scripts de tienda/carrito cada vez que el usuario agrega o elimina un ítem,
+// sin necesidad de recargar la página ni de hacer una nueva petición al servidor.
 function updateNavCartBadge(count) {
   const badge = document.getElementById('navCartBadge');
   if (!badge) return;
@@ -399,5 +229,10 @@ function updateNavCartBadge(count) {
   badge.style.display = count > 0 ? 'inline-flex' : 'none';
 }
 </script>
+
+<!-- intro.js para los tours guiados de onboarding -->
+<script src="https://unpkg.com/intro.js/intro.js"></script>
+<!-- Script del tour de navegación — se ejecuta en todas las páginas que usen head.php -->
+<script src="<?= $base ?>/src/help.js"></script>
 </body>
 </html>

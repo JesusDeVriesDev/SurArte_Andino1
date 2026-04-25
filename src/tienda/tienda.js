@@ -1,30 +1,45 @@
+// Base de rutas construida desde la variable global que PHP inyecta en head.php.
+// Todas las llamadas a la API usan esta constante para funcionar en subdirectorios.
 const BASE = window.APP_BASE || '';
 
+// Abre o cierra el panel lateral del carrito de compras.
+// Funciona tanto en desktop (panel fijo) como en móvil (bottom sheet).
 function toggleCarrito() {
   const panel = document.getElementById('carritoPanel');
   if (!panel) return;
   panel.classList.toggle('carrito-open');
 }
 
+// Sincroniza todos los indicadores visuales del carrito con los valores
+// que devuelve la API: total en pesos, número de ítems en el badge del nav,
+// contador en el título del panel y visibilidad del footer con el botón de pago.
 function actualizarTotalUI(totalPrecio, totalItems) {
   const el = document.getElementById('carritoTotalEl');
   if (el) el.textContent = '$' + new Intl.NumberFormat('es-CO').format(totalPrecio);
+
   const badge = document.getElementById('cartCount');
   if (badge) badge.textContent = totalItems;
+
   const h3span = document.querySelector('.carrito-title span');
   if (h3span) h3span.textContent = '(' + totalItems + ' items)';
+
   const footer = document.getElementById('carritoFooter');
   if (footer) footer.style.display = totalItems > 0 ? '' : 'none';
+
   const empty = document.getElementById('carritoEmpty');
   if (empty) empty.style.display = totalItems === 0 ? 'flex' : 'none';
 }
 
+// Escucha todos los botones "+" de los productos. Al hacer clic, envía el producto
+// al carrito, actualiza los contadores y añade la fila al DOM sin recargar la página.
+// Si el producto ya está en el carrito, incrementa su cantidad en lugar de duplicar.
 document.querySelectorAll('.btn-add[data-id]').forEach(btn => {
   btn.addEventListener('click', async () => {
     const id     = btn.dataset.id;
     const nombre = btn.dataset.nombre;
     const precio = parseFloat(btn.dataset.precio);
-    btn.disabled = true; btn.textContent = '…';
+    btn.disabled = true;
+    btn.textContent = '…';
     try {
       const r = await fetch(BASE + '/api/carrito/add.php', {
         method: 'POST',
@@ -35,22 +50,30 @@ document.querySelectorAll('.btn-add[data-id]').forEach(btn => {
       if (d.success) {
         toast('"' + nombre + '" agregado al carrito', 'ok');
         actualizarTotalUI(d.data.total_precio, d.data.total_items);
-        if(typeof updateNavCartBadge==="function") updateNavCartBadge(d.data.total_items);
+        if (typeof updateNavCartBadge === 'function') updateNavCartBadge(d.data.total_items);
         document.getElementById('carritoPanel')?.classList.add('carrito-open');
         agregarItemDOM(id, nombre, precio, btn.dataset.categoria || '');
         btn.textContent = '✓';
-        setTimeout(() => { btn.textContent = '+'; btn.disabled = false; }, 1800);
+        setTimeout(() => {
+          btn.textContent = '+';
+          btn.disabled = false;
+        }, 1800);
       } else {
         toast(d.message || 'Error al agregar', 'err');
-        btn.textContent = '+'; btn.disabled = false;
+        btn.textContent = '+';
+        btn.disabled = false;
       }
-    } catch(e) {
+    } catch (e) {
       toast('Error de conexión', 'err');
-      btn.textContent = '+'; btn.disabled = false;
+      btn.textContent = '+';
+      btn.disabled = false;
     }
   });
 });
 
+// Inserta la fila visual del producto en el panel del carrito.
+// Si el producto ya existe en el DOM (mismo id), solo incrementa su cantidad.
+// Usa un mapa de iconos por categoría para darle identidad visual a cada ítem.
 function agregarItemDOM(prodId, nombre, precio, categoria) {
   const existing = document.getElementById('ci-' + prodId);
   if (existing) {
@@ -58,7 +81,7 @@ function agregarItemDOM(prodId, nombre, precio, categoria) {
     if (qtyEl) qtyEl.textContent = parseInt(qtyEl.textContent) + 1;
     return;
   }
-  const iconMap = {musica:'🎵',arte:'🎨',artesania:'🧵',danza:'💃',literatura:'📖',otro:'✨'};
+  const iconMap = { musica: '🎵', arte: '🎨', artesania: '🧵', danza: '💃', literatura: '📖', otro: '✨' };
   const ic = iconMap[categoria] || '🛍️';
   const html = `
     <div class="carrito-item" id="ci-${prodId}">
@@ -74,10 +97,11 @@ function agregarItemDOM(prodId, nombre, precio, categoria) {
       </div>
       <button onclick="quitarDelCarrito('${prodId}')" class="ci-del" title="Quitar">✕</button>
     </div>`;
-  const container = document.getElementById('carritoItems');
-  container.insertAdjacentHTML('afterbegin', html);
+  document.getElementById('carritoItems').insertAdjacentHTML('afterbegin', html);
 }
 
+// Cambia la cantidad de un ítem en el carrito. Si la nueva cantidad llega a 0,
+// delega a quitarDelCarrito para limpiar correctamente el DOM y el servidor.
 async function cambiarCantidad(prodId, delta) {
   const qtyEl = document.getElementById('qty-' + prodId);
   const actual = parseInt(qtyEl?.textContent || '1');
@@ -85,51 +109,72 @@ async function cambiarCantidad(prodId, delta) {
   if (nueva < 1) { quitarDelCarrito(prodId); return; }
   try {
     const r = await fetch(BASE + '/api/carrito/update.php', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ producto_id: prodId, cantidad: nueva })
     });
     const d = await r.json();
     if (d.success) {
       if (qtyEl) qtyEl.textContent = nueva;
       actualizarTotalUI(d.data.total_precio, d.data.total_items);
-        if(typeof updateNavCartBadge==="function") updateNavCartBadge(d.data.total_items);
+      if (typeof updateNavCartBadge === 'function') updateNavCartBadge(d.data.total_items);
     } else {
       toast(d.message || 'Error', 'err');
     }
-  } catch { toast('Error de conexión','err'); }
+  } catch {
+    toast('Error de conexión', 'err');
+  }
 }
 
+// Elimina un producto del carrito tanto en el servidor como en el DOM.
+// Actualiza los totales y el badge del nav inmediatamente después de la respuesta.
 async function quitarDelCarrito(prodId) {
   try {
     const r = await fetch(BASE + '/api/carrito/remove.php', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ producto_id: prodId })
     });
     const d = await r.json();
     if (d.success) {
       document.getElementById('ci-' + prodId)?.remove();
       actualizarTotalUI(d.data.total_precio, d.data.total_items);
-        if(typeof updateNavCartBadge==="function") updateNavCartBadge(d.data.total_items);
+      if (typeof updateNavCartBadge === 'function') updateNavCartBadge(d.data.total_items);
     } else {
       toast(d.message || 'Error', 'err');
     }
-  } catch { toast('Error de conexión','err'); }
+  } catch {
+    toast('Error de conexión', 'err');
+  }
 }
 
+// Procesa el pago del carrito completo. Confirma con el usuario antes de enviar
+// y muestra un mensaje de éxito con el número de pedido. Si el checkout tiene éxito,
+// reemplaza el contenido del carrito con una confirmación y recarga la página
+// después de un breve retardo para actualizar el stock mostrado en la tienda.
 async function pagar() {
   if (!confirm('¿Confirmar el pago? El stock se actualizará automáticamente.')) return;
   const btn = document.getElementById('btnPagar');
-  btn.disabled = true; btn.textContent = '⏳ Procesando…';
+  btn.disabled = true;
+  btn.textContent = '⏳ Procesando…';
   try {
     const r = await fetch(BASE + '/api/carrito/checkout.php', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({})
     });
     const d = await r.json();
     if (d.success) {
-      toast('¡Pago exitoso! Pedido #' + d.data.pedido_id.substring(0,8).toUpperCase(), 'ok');
+      toast('¡Pago exitoso! Pedido #' + d.data.pedido_id.substring(0, 8).toUpperCase(), 'ok');
       document.getElementById('carritoItems').innerHTML =
-        '<div class="carrito-empty" style="display:flex;flex-direction:column"><div style="font-size:2.2rem">✅</div><p>¡Pedido confirmado!</p><a href="' + BASE + '/src/perfil/index.php" style="font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sky);text-decoration:none;margin-top:8px">Ver mis compras →</a></div>';
+        `<div class="carrito-empty" style="display:flex;flex-direction:column">
+          <div style="font-size:2.2rem">✅</div>
+          <p>¡Pedido confirmado!</p>
+          <a href="${BASE}/src/perfil/index.php"
+             style="font-family:var(--ff-m);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sky);text-decoration:none;margin-top:8px">
+            Ver mis compras →
+          </a>
+        </div>`;
       document.getElementById('carritoFooter').style.display = 'none';
       document.getElementById('cartCount').textContent = '0';
       const h3span = document.querySelector('.carrito-title span');
@@ -137,10 +182,12 @@ async function pagar() {
       setTimeout(() => location.reload(), 2800);
     } else {
       toast(d.message || 'Error al procesar el pago', 'err');
-      btn.disabled = false; btn.textContent = '💳 Pagar ahora';
+      btn.disabled = false;
+      btn.textContent = '💳 Pagar ahora';
     }
-  } catch(e) {
+  } catch (e) {
     toast('Error de conexión', 'err');
-    btn.disabled = false; btn.textContent = '💳 Pagar ahora';
+    btn.disabled = false;
+    btn.textContent = '💳 Pagar ahora';
   }
 }

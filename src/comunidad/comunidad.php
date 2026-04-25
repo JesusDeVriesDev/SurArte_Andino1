@@ -1,4 +1,6 @@
 <?php
+// Página estática de 'próximamente'. No necesita datos de BD por ahora.
+// Cuando la sección esté implementada, aquí irá la carga de posts, foros, etc.
 $pageTitle = 'Comunidad';
 $pageId    = 'comunidad';
 require_once '../_layout/head.php';

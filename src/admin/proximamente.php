@@ -10,9 +10,12 @@ if (!$user || $user['rol'] !== 'admin') {
     exit;
 }
 
-$modulo   = htmlspecialchars($_GET['modulo']   ?? 'este módulo');
-$icono    = htmlspecialchars($_GET['icono']    ?? '🚀');
-$desc     = htmlspecialchars($_GET['desc']     ?? 'Estamos trabajando para traerte nuevas funcionalidades al panel de administración.');
+// Esta página es un placeholder genérico para módulos del panel que aún no están implementados.
+// Recibe el nombre del módulo, su ícono y descripción como parámetros GET para reutilizarse
+// sin duplicar HTML. El admin llega aquí desde los links del sidebar que apuntan a módulos pendientes.
+$modulo = htmlspecialchars($_GET['modulo'] ?? 'este módulo');
+$icono  = htmlspecialchars($_GET['icono']  ?? '🚀');
+$desc   = htmlspecialchars($_GET['desc']   ?? 'Estamos trabajando para traerte nuevas funcionalidades al panel de administración.');
 ?>
 <!DOCTYPE html>
 <html lang="es">

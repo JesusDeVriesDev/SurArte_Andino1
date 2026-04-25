@@ -1,12 +1,15 @@
 <?php
-$pageTitle  = 'Artistas';
-$pageId     = 'artistas';
-$flashWarn  = $_SESSION['_flash_warn'] ?? null;
+// Carga el título y el ID de la sección para que el nav marque "Artistas" como activo.
+// El flash de advertencia ($_flash_warn) viene de páginas que redirigen aquí con un aviso.
+$pageTitle = 'Artistas';
+$pageId    = 'artistas';
+$flashWarn = $_SESSION['_flash_warn'] ?? null;
 unset($_SESSION['_flash_warn']);
 require_once '../_layout/head.php';
 require_once '../../config/db.php';
 
 try {
+    // Solo muestra artistas verificados — los pendientes no son visibles para el público
     $artistas = db()->query(
         "SELECT id, nombre, disciplina, municipio, bio, foto_url
          FROM artistas
@@ -14,6 +17,7 @@ try {
          ORDER BY creado_en DESC"
     )->fetchAll();
 
+    // Lista de disciplinas únicas para el filtro desplegable de la vista
     $disciplinas = db()->query(
         "SELECT DISTINCT disciplina FROM artistas WHERE verificado = TRUE AND disciplina IS NOT NULL ORDER BY disciplina"
     )->fetchAll(PDO::FETCH_COLUMN);
@@ -23,6 +27,8 @@ try {
     $dbError = $e->getMessage();
 }
 
+// Mapa de iconos para cada disciplina — si la disciplina no está en el mapa,
+// el template usará un emoji aleatorio de $emojis como fallback visual
 $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖',
              'pintura'=>'🖼️','escultura'=>'🗿','fotografia'=>'📷','teatro'=>'🎭','otro'=>'✨',
              'Barniz de Pasto'=>'🎨','Cerámica Contemporánea'=>'🏺','Música Andina'=>'🎵'];

@@ -126,7 +126,9 @@
   object-fit: cover;
   transition: transform .4s var(--ease);
 }
-.art-card:hover .art-card-img img { transform: scale(1.05); }
+.art-card:hover .art-card-img img {
+  transform: scale(1.05);
+}
 
 .art-card-placeholder {
   width: 100%; height: 100%;
@@ -230,7 +232,12 @@
   font-size: 4rem;
   overflow: hidden;
 }
-.perfil-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--r-lg); }
+.perfil-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--r-lg);
+}
 .perfil-nombre {
   font-family: var(--ff-d);
   font-size: clamp(2rem, 4vw, 3.4rem);
@@ -240,7 +247,9 @@
   letter-spacing: -.03em;
   margin-bottom: 12px;
 }
-.perfil-nombre em { color: var(--clay); }
+.perfil-nombre em {
+  color: var(--clay);
+}
 .perfil-meta {
   display: flex;
   gap: 14px;
@@ -272,7 +281,10 @@
   transition: all .2s;
   margin-right: 6px;
 }
-.perfil-social a:hover { border-color: var(--gold); color: var(--gold); }
+.perfil-social a:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
 
 /* Sección de productos del perfil */
 .perfil-section {
@@ -311,15 +323,31 @@
 }
 
 @media (max-width: 860px) {
-  .perfil-hero { grid-template-columns: 1fr; }
-  .perfil-avatar { width: 120px; height: 120px; font-size: 2.5rem; }
-  .form-grid-2 { grid-template-columns: 1fr; }
-  .art-grid { grid-template-columns: repeat(2, 1fr); }
+  .perfil-hero {
+    grid-template-columns: 1fr;
+  }
+  .perfil-avatar {
+    width: 120px;
+    height: 120px;
+    font-size: 2.5rem;
+  }
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .art-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 @media (max-width: 480px) {
-  .art-grid { grid-template-columns: 1fr; }
-  .art-cta-banner { padding: 36px 24px; }
-  .form-card { padding: 24px 20px; }
+  .art-grid {
+    grid-template-columns: 1fr;
+  }
+  .art-cta-banner {
+    padding: 36px 24px;
+  }
+  .form-card {
+    padding: 24px 20px;
+  }
 }
 
 .carrito-item {
@@ -330,8 +358,12 @@
   border-bottom: 1px solid rgba(26,18,8,.04);
   transition: background .18s;
 }
-.carrito-item:last-child { border-bottom: none; }
-.carrito-item:hover { background: rgba(201,146,42,.03); }
+.carrito-item:last-child {
+  border-bottom: none;
+}
+.carrito-item:hover {
+  background: rgba(201,146,42,.03);
+}
 
 .ci-img {
   width: 44px; height: 44px;
@@ -344,7 +376,10 @@
   font-size: 1.2rem;
   overflow: hidden;
 }
-.ci-info { flex: 1; min-width: 0; }
+.ci-info {
+  flex: 1;
+  min-width: 0;
+}
 .ci-nombre {
   font-family: var(--ff-d);
   font-size: .82rem;
@@ -381,14 +416,19 @@
   color: var(--ink);
   line-height: 1;
 }
-.qty-btn:hover { background: var(--gold); border-color: var(--gold); }
+.qty-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+}
 .ci-del {
   background: none; border: none;
   cursor: pointer; font-size: .72rem;
   color: rgba(26,18,8,.22); padding: 4px;
   transition: color .18s; flex-shrink: 0;
 }
-.ci-del:hover { color: var(--err); }
+.ci-del:hover {
+  color: var(--err);
+}
 /* ── Responsive: filtros de artistas ───────────────── */
 @media (max-width: 600px) {
   .art-hero {

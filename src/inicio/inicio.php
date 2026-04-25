@@ -1,9 +1,12 @@
 <?php
+// Carga los contadores de estadísticas que se muestran en las tarjetas del hero.
+// Si la BD no responde, los valores quedan en 0 y se muestra un aviso en pantalla.
 $pageTitle = 'Inicio';
 $pageId    = 'inicio';
 require_once '../_layout/head.php';
 require_once '../../config/db.php';
 try {
+    // Solo cuenta artistas verificados y eventos próximos activos
     $nArtistas  = db()->query("SELECT COUNT(*) FROM artistas")->fetchColumn();
     $nEventos   = db()->query("SELECT COUNT(*) FROM eventos WHERE activo=true AND fecha_inicio >= NOW()")->fetchColumn();
     $nProductos = db()->query("SELECT COUNT(*) FROM productos WHERE activo=true")->fetchColumn();

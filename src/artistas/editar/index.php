@@ -5,9 +5,13 @@ $pageId    = 'artistas';
 require_once '../../_layout/head.php';
 require_once '../../../config/db.php';
 
+// Solo artistas pueden editar su perfil artístico
 if (!$user || $user['rol'] !== 'artista') {
     header('Location: ' . $base . '/src/artistas/artistas.php'); exit;
 }
+
+// Comprueba si el artista ya está verificado — la sesión puede estar desactualizada
+// si el admin lo verificó después del último login, así que siempre consultamos la BD
 $_guardVerificado = $_SESSION['artista_verificado'] ?? false;
 if (!$_guardVerificado) {
     try {
@@ -15,19 +19,25 @@ if (!$_guardVerificado) {
         $gStmt->execute([$_SESSION['user_id']]);
         $gRow = $gStmt->fetch(PDO::FETCH_ASSOC);
         $_guardVerificado = ($gRow && $gRow['verificado'] == true);
-        if ($_guardVerificado) $_SESSION['artista_verificado'] = true; // actualizar sesión
+        // Si acaba de ser verificado, actualiza la sesión para que el nav lo refleje
+        if ($_guardVerificado) $_SESSION['artista_verificado'] = true;
     } catch (Exception $e) { $_guardVerificado = false; }
 }
+
+// Un artista no verificado no tiene acceso al editor — dejamos el aviso y redirigimos
 if (!$_guardVerificado) {
     $_SESSION['_flash_warn'] = 'Tu perfil aún no ha sido verificado. Espera la revisión del administrador.';
     header('Location: ' . $base . '/src/artistas/artistas.php'); exit;
 }
 
+// Mensajes flash del último guardado
 $ok    = $_SESSION['editar_ok']    ?? null;
 $error = $_SESSION['editar_error'] ?? null;
 unset($_SESSION['editar_ok'], $_SESSION['editar_error']);
 
 try {
+    // Carga los datos artísticos y los de la cuenta de usuario por separado
+    // porque viven en tablas distintas (artistas y usuarios)
     $stmt = db()->prepare("SELECT * FROM artistas WHERE usuario_id = ?::uuid");
     $stmt->execute([$_SESSION['user_id']]);
     $artista = $stmt->fetch();
@@ -40,6 +50,7 @@ try {
     $dbError = $e->getMessage();
 }
 
+// Lista de disciplinas para el select del formulario de perfil artístico
 $disciplinas = ['Barniz de Pasto','Cerámica','Pintura','Escultura','Música Andina','Danza','Literatura',
                 'Fotografía','Teatro','Artesanía','Tejido','Orfebrería','Otro'];
 ?>

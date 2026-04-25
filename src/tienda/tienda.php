@@ -1,10 +1,14 @@
 <?php
+// Carga los productos, las categorías disponibles y el carrito del usuario.
+// Si el usuario no está logueado, el carrito queda vacío y el botón de pago no aparece.
 $pageTitle = 'Tienda';
 $pageId    = 'tienda';
 require_once '../_layout/head.php';
 require_once '../../config/db.php';
 
 try {
+    // Trae los últimos 24 productos activos de artistas verificados,
+    // incluyendo el conteo de comentarios para mostrarlo en cada tarjeta
     $productosDestacados = db()->query(
         "SELECT p.id, p.nombre, p.descripcion, p.categoria, p.precio, p.stock, p.imagen_url,
                 a.nombre AS artista_nombre, a.municipio, a.id AS artista_id,
@@ -17,6 +21,7 @@ try {
          ORDER BY p.creado_en DESC LIMIT 24"
     )->fetchAll();
 
+    // Categorías con al menos un producto activo para los filtros
     $categorias = db()->query(
         "SELECT p.categoria, COUNT(*) AS total
          FROM productos p JOIN artistas a ON p.artista_id = a.id
@@ -24,6 +29,7 @@ try {
          GROUP BY p.categoria ORDER BY total DESC"
     )->fetchAll();
 
+    // Carga el carrito solo si hay usuario activo — los visitantes no tienen carrito
     $carritoItems = [];
     $carritoTotal = 0;
     if ($user) {
@@ -46,6 +52,7 @@ try {
     $dbError = $e->getMessage();
 }
 
+// Mapas de íconos y etiquetas para las categorías de productos
 $catIcons  = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨'];
 $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danza'=>'Danza','literatura'=>'Literatura','otro'=>'Otro'];
 ?>
@@ -107,6 +114,7 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
         ?>
         <div class="product-card" data-cat="<?= htmlspecialchars($catKey) ?>" style="cursor:pointer" onclick="window.location='<?= $base ?>/src/tienda/producto.php?id=<?= urlencode($p['id']) ?>'">
           <div class="product-img-wrap">
+            <?php /* Filtra URLs de placeholder o locales — solo muestra imágenes externas reales */ ?>
             <?php if (!empty($p['imagen_url']) && str_starts_with($p['imagen_url'],'http') && !str_contains($p['imagen_url'],'example.com')): ?>
               <img class="product-img-real" src="<?= htmlspecialchars($p['imagen_url']) ?>" alt="<?= htmlspecialchars($p['nombre']) ?>" loading="lazy">
             <?php else: ?>
@@ -133,6 +141,7 @@ $catLabels = ['musica'=>'Música','arte'=>'Arte','artesania'=>'Artesanía','danz
             <?php endif; ?>
             <div class="product-footer">
               <div class="product-price"><?= $p['precio'] > 0 ? '$'.number_format((float)$p['precio'],0,',','.') : 'Gratis' ?></div>
+              <?php /* Usuarios logueados ven el botón +, visitantes ven enlace al login */ ?>
               <?php if ($user): ?>
                 <button class="btn-add"
                   data-id="<?= htmlspecialchars($p['id']) ?>"

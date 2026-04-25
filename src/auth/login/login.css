@@ -1,6 +1,12 @@
+/* Permite scroll en la página de login — global.css lo deshabilita para el dashboard */
 .auth-body { overflow: auto; background: var(--color-ink); }
+
+/* Layout de dos columnas: panel visual a la izquierda, formulario a la derecha */
 .auth-layout { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
 
+
+/* ─── Panel visual izquierdo ────────────────────────────────────────────────── */
+/* Fondo oscuro con dos degradados radiales superpuestos para dar profundidad sin imagen */
 .auth-visual {
   background: var(--color-ink);
   background-image:
@@ -9,41 +15,59 @@
   display: flex; align-items: center; justify-content: center; padding: 60px;
   position: relative; overflow: hidden;
 }
+
+/* Patrón de rejilla en diagonal — capa decorativa sobre el fondo, no interactiva */
 .auth-visual::after {
   content: ''; position: absolute; inset: 0; opacity: .04;
   background-image:
     repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(201,146,42,.5) 40px, rgba(201,146,42,.5) 41px),
     repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(201,146,42,.5) 40px, rgba(201,146,42,.5) 41px);
 }
+
+/* El contenido del panel visual necesita z-index > 0 para quedar sobre el ::after */
 .auth-visual-content { position: relative; z-index: 1; }
+
+/* Nombre de marca a gran escala — texto principal de la columna izquierda */
 .auth-brand {
   font-family: var(--ff-display);
   font-size: clamp(3rem, 6vw, 5rem);
   font-weight: 900; line-height: .9; letter-spacing: -.03em;
   color: #FFFEF9;
 }
+/* El em del brand va en itálica y en dorado para diferenciar las dos palabras */
 .auth-brand em { display: block; font-style: italic; color: #C9922A; }
+
+/* Subtítulo descriptivo bajo el nombre de marca */
 .auth-visual-sub {
   font-size: 1.1rem; font-weight: 400; color: rgba(250,245,236,.8);
   margin-top: 1rem; position: relative; z-index: 1;
 }
 
+
+/* ─── Panel del formulario ───────────────────────────────────────────────────── */
+/* Fondo claro (crema) para contrastar con el panel oscuro izquierdo */
 .auth-panel {
   background: var(--color-cream);
   display: flex; align-items: center; justify-content: center; padding: 60px 40px;
 }
+
+/* Contenedor interno que limita el ancho del formulario para que no se estire en pantallas anchas */
 .auth-form-wrap { width: 100%; max-width: 400px; }
 .auth-header { margin-bottom: 2rem; }
 
+/* Título principal del formulario ("Iniciar sesión") */
 .auth-title {
   font-family: var(--ff-display);
   font-size: clamp(2.2rem, 3.5vw, 3rem);
   font-weight: 900; line-height: .95; letter-spacing: -.02em;
   color: #0d0902; margin-top: .75rem;
 }
+/* La palabra en itálica del título usa el color arcilla del sistema de diseño */
 .auth-title em { font-style: italic; color: var(--color-clay); }
 
-/* Labels */
+
+/* ─── Labels de los campos ──────────────────────────────────────────────────── */
+/* Se usa !important porque main.css puede sobreescribir los estilos heredados */
 .input-label {
   font-family: var(--ff-mono) !important;
   font-size: .82rem !important;
@@ -54,7 +78,8 @@
   opacity: 1 !important;
 }
 
-/* Inputs */
+
+/* ─── Inputs ────────────────────────────────────────────────────────────────── */
 .input {
   background: #FFFEF9 !important;
   border: 1.5px solid #EDE4D0 !important;
@@ -67,25 +92,37 @@
   width: 100% !important;
   transition: border-color .22s, box-shadow .22s !important;
 }
+/* El borde dorado y el halo en foco indica que el campo está activo */
 .input:focus {
   outline: none !important;
   border-color: #C9922A !important;
   box-shadow: 0 0 0 3px rgba(201,146,42,.12) !important;
 }
 .input::placeholder { color: rgba(26,18,8,.5) !important; font-weight: 400 !important; }
+
+/* Estado de error: borde rojo — lo activa JS cuando falla la validación */
 .input.input--error { border-color: #ef4444 !important; }
 
+
+/* ─── Fila de opciones extras (recordarme + olvidé contraseña) ──────────────── */
 .auth-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+
+/* Label del checkbox "Recordarme" */
 .auth-check {
   display: flex; align-items: center; gap: .5rem;
   font-size: 1rem; font-weight: 400; color: #1A1208; cursor: pointer;
 }
+
+/* Links de acción secundaria (olvidé contraseña, registrarse) */
 .auth-link {
   font-family: var(--ff-mono); font-size: .78rem;
   letter-spacing: .06em; color: #C9922A; font-weight: 500;
 }
 .auth-link:hover { text-decoration: underline; }
 
+
+/* ─── Separador "o continúa con" ────────────────────────────────────────────── */
+/* Las líneas horizontales se generan con ::before y ::after para no necesitar elementos extra */
 .auth-divider {
   text-align: center; position: relative; margin: 1.5rem 0;
   color: rgba(26,18,8,.4); font-family: var(--ff-mono);
@@ -96,13 +133,18 @@
 }
 .auth-divider::before { left:0; } .auth-divider::after { right:0; }
 
+
+/* ─── Pie del formulario ─────────────────────────────────────────────────────── */
+/* Texto "¿No tienes cuenta? Regístrate aquí" */
 .auth-footer-txt {
   text-align: center; font-size: 1rem; font-weight: 400;
   color: #3D2B10; margin-top: 1.5rem;
 }
 .auth-footer-txt .auth-link { font-size: .72rem; }
 
-/* Modo oscuro — textos claros sobre fondo oscuro */
+
+/* ─── Modo oscuro ────────────────────────────────────────────────────────────── */
+/* Se activa automáticamente si el sistema operativo del usuario tiene modo oscuro */
 @media (prefers-color-scheme: dark) {
   .auth-panel { background: #1E180C; }
   .auth-title { color: #FAF5EC; }
@@ -119,13 +161,17 @@
   .auth-divider::before,.auth-divider::after { background: #3d2e18; }
 }
 
+
+/* ─── Responsive móvil ───────────────────────────────────────────────────────── */
+/* En pantallas pequeñas se oculta el panel visual y el formulario ocupa toda la pantalla */
 @media (max-width: 768px) {
   .auth-layout { grid-template-columns: 1fr; }
   .auth-visual { display: none; }
   .auth-panel { padding: 48px 28px; }
 }
 
-/* Perks panel izquierdo */
+
+/* ─── Lista de beneficios en el panel visual ─────────────────────────────────── */
 .auth-visual-content .gold-line { margin: 1.4rem 0 1.6rem; }
 .auth-perks { list-style: none; padding: 0; margin: 2rem 0 0; display: flex; flex-direction: column; gap: 1rem; }
 .auth-perk {
@@ -133,8 +179,12 @@
   font-family: var(--ff-body); font-size: 1rem;
   font-weight: 400; color: rgba(250,245,236,.85); line-height: 1.6;
 }
+/* Ícono decorativo dorado al inicio de cada ítem de la lista */
 .perk-icon { color: #C9922A; font-size: 1.1rem; flex-shrink: 0; margin-top: .1rem; font-weight: 600; }
 
+
+/* ─── Botón de toggle de contraseña ─────────────────────────────────────────── */
+/* Se posiciona absolutamente dentro del input wrapper usando position:relative del padre */
 .pass-toggle {
   position: absolute; right: 12px; top: 50%;
   transform: translateY(-50%);
@@ -149,7 +199,8 @@
   .pass-toggle:hover { color: #FAF5EC !important; }
 }
 
-/* Botón Google */
+
+/* ─── Botón de autenticación con Google ──────────────────────────────────────── */
 .social-auth-row {
   display: flex;
   justify-content: center;
@@ -171,6 +222,7 @@
   cursor: pointer;
   transition: all .22s;
 }
+/* En hover adopta el color dorado de marca para mantener consistencia visual */
 .social-auth-btn:hover {
   border-color: #C9922A !important;
   background: rgba(201,146,42,.06) !important;

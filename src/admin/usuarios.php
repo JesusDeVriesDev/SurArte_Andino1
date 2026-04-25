@@ -10,6 +10,9 @@ if (!$user || $user['rol'] !== 'admin') {
     exit;
 }
 
+// Esta vista también acepta POST para las acciones rápidas de la tabla (cambiar rol / eliminar).
+// El endpoint REST /api/admin/usuarios.php hace lo mismo pero devuelve JSON para el JS de la tabla.
+// Aquí se mantiene el fallback por form para casos sin JavaScript habilitado.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'] ?? '';
     $id     = $_POST['id'] ?? '';
@@ -34,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 try {
+    // Lista completa de usuarios ordenada del más reciente al más antiguo
     $usuarios = db()->query(
         "SELECT id, nombre, email, rol, activo, creado_en FROM usuarios ORDER BY creado_en DESC"
     )->fetchAll();
@@ -42,6 +46,7 @@ try {
     $dbError = $e->getMessage();
 }
 
+// Mapa de colores de badge para cada rol
 $rolColors = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge-gold','visitante'=>'badge-muted','usuario'=>'badge-muted'];
 ?>
 <!DOCTYPE html>
@@ -126,7 +131,8 @@ $rolColors = ['admin'=>'badge-clay','artista'=>'badge-sky','organizador'=>'badge
     <input class="admin-search" id="adminSearch" type="text" placeholder="Buscar por nombre o correo…"/>
     <button class="filter-pill active" data-rol="all">Todos (<?= count($usuarios) ?>)</button>
     <?php
-    $roles = array_count_values(array_column($usuarios, 'rol'));
+    // Pills de filtro generados dinámicamente — agregar un rol aquí lo añade al filtro
+        $roles = array_count_values(array_column($usuarios, 'rol'));
     foreach ($roles as $r => $c):
     ?>
     <button class="filter-pill" data-rol="<?= htmlspecialchars($r) ?>"><?= ucfirst($r) ?> (<?= $c ?>)</button>

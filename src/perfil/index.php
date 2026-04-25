@@ -1,4 +1,6 @@
 <?php
+// Carga los datos del usuario y su historial de pedidos.
+// Si no hay sesión activa, redirige al login.
 ob_start();
 $pageTitle = 'Mi Perfil';
 $pageId    = 'perfil';
@@ -8,10 +10,12 @@ require_once '../../config/db.php';
 if (!$user) { header('Location: ' . $base . '/src/auth/login/index.php'); exit; }
 
 try {
+    // Trae todos los campos del usuario para pre-rellenar el formulario de cuenta
     $uStmt = db()->prepare("SELECT * FROM usuarios WHERE id = ?::uuid");
     $uStmt->execute([$_SESSION['user_id']]);
     $uData = $uStmt->fetch();
 
+    // Historial de pedidos agrupado por pedido, con el conteo de productos incluidos
     $pedidosStmt = db()->prepare(
         "SELECT p.id, p.total, p.estado, p.creado_en,
                 COUNT(pi.id) AS num_items
@@ -28,6 +32,7 @@ try {
     $dbError = $e->getMessage();
 }
 
+// Mapa de estilos y emojis para los distintos estados de un pedido
 $estadoColors = ['pagado'=>'badge-green','enviado'=>'badge-sky','entregado'=>'badge-green','cancelado'=>'badge-clay'];
 $estadoIcons  = ['pagado'=>'✅','enviado'=>'🚚','entregado'=>'📦','cancelado'=>'❌'];
 ?>

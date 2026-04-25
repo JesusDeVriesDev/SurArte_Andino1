@@ -201,7 +201,13 @@
 }
 
 @media (max-width: 600px) {
-  .ev-grid { grid-template-columns: 1fr; }
-  .ev-search { width: 100%; }
-  .ev-modal { padding: 20px 16px; }
+  .ev-grid {
+    grid-template-columns: 1fr;
+  }
+  .ev-search {
+    width: 100%;
+  }
+  .ev-modal {
+    padding: 20px 16px;
+  }
 }

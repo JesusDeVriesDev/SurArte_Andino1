@@ -20,8 +20,12 @@
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 /* Mobile: apilar columnas */
@@ -86,12 +90,21 @@
   box-shadow: 0 4px 20px rgba(201,146,42,0.45);
   animation: pulse-gold 2.2s ease-in-out infinite;
 }
-#btn-accesibilidad .acc-icon { font-size: 1.1rem; line-height: 1; }
-#btn-accesibilidad .acc-label { line-height: 1; }
+#btn-accesibilidad .acc-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+#btn-accesibilidad .acc-label {
+  line-height: 1;
+}
 
 @keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 4px 20px rgba(201,146,42,0.45); }
-  50%       { box-shadow: 0 4px 32px rgba(201,146,42,0.75); }
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(201,146,42,0.45);
+  }
+  50% {
+    box-shadow: 0 4px 32px rgba(201,146,42,0.75);
+  }
 }
 
 /* ── Toast ───────────────────────────────────────────── */

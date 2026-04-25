@@ -5,10 +5,12 @@ $pageId    = 'artistas';
 require_once '../../_layout/head.php';
 require_once '../../../config/db.php';
 
+// Solo artistas acceden a esta sección
 if (!$user || $user['rol'] !== 'artista') {
     header('Location: ' . $base . '/src/artistas/artistas.php'); exit;
 }
 
+// Igual que en editar — verificamos contra la BD por si el admin verificó entre sesiones
 $_guardVerificado = $_SESSION['artista_verificado'] ?? false;
 if (!$_guardVerificado) {
     try {
@@ -16,25 +18,29 @@ if (!$_guardVerificado) {
         $gStmt->execute([$_SESSION['user_id']]);
         $gRow = $gStmt->fetch(PDO::FETCH_ASSOC);
         $_guardVerificado = ($gRow && $gRow['verificado'] == true);
-        if ($_guardVerificado) $_SESSION['artista_verificado'] = true; // actualizar sesión
+        if ($_guardVerificado) $_SESSION['artista_verificado'] = true;
     } catch (Exception $e) { $_guardVerificado = false; }
 }
+
+// Artistas no verificados no pueden publicar productos todavía
 if (!$_guardVerificado) {
     $_SESSION['_flash_warn'] = 'Tu perfil aún no ha sido verificado. Espera la revisión del administrador.';
     header('Location: ' . $base . '/src/artistas/artistas.php'); exit;
 }
 
+// Mensajes flash de la última operación sobre un producto
 $ok    = $_SESSION['prod_ok']    ?? null;
 $error = $_SESSION['prod_error'] ?? null;
 unset($_SESSION['prod_ok'], $_SESSION['prod_error']);
 
 try {
+    // Necesitamos el ID de la tabla artistas (UUID) para filtrar los productos de este artista
     $artStmt = db()->prepare("SELECT id, verificado FROM artistas WHERE usuario_id = ?::uuid");
     $artStmt->execute([$_SESSION['user_id']]);
     $artista = $artStmt->fetch();
-
     if (!$artista) { header('Location: ' . $base . '/src/artistas/registro/index.php'); exit; }
 
+    // Trae todos sus productos, activos e inactivos, ordenados del más reciente al más antiguo
     $productos = db()->prepare(
         "SELECT * FROM productos WHERE artista_id = ?::uuid ORDER BY creado_en DESC"
     );
@@ -43,6 +49,7 @@ try {
 
 } catch (PDOException $e) { $productos = []; $dbError = $e->getMessage(); }
 
+// Íconos para cada categoría de producto en las tarjetas del listado
 $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃','literatura'=>'📖','otro'=>'✨'];
 ?>
 <!DOCTYPE html>
