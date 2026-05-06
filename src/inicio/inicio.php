@@ -77,6 +77,5 @@ try {
 
   </div>
 </main>
-<script src="inicio.js"></script>
 </body>
 </html>

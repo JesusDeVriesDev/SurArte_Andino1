@@ -234,5 +234,6 @@ function updateNavCartBadge(count) {
 <script src="https://unpkg.com/intro.js/intro.js"></script>
 <!-- Script del tour de navegación — se ejecuta en todas las páginas que usen head.php -->
 <script src="<?= $base ?>/src/help.js"></script>
+<script src="<?= $base ?>/src/accesibility.js" defer></script>
 </body>
 </html>

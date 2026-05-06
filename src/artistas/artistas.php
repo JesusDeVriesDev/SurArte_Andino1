@@ -34,6 +34,7 @@ $catIcons = ['musica'=>'🎵','arte'=>'🎨','artesania'=>'🧵','danza'=>'💃'
              'Barniz de Pasto'=>'🎨','Cerámica Contemporánea'=>'🏺','Música Andina'=>'🎵'];
 $emojis = ['🎨','🏺','🪇','🧵','🖼️','💃','📷','🎭','🌺','🦜','🌿','✨'];
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
