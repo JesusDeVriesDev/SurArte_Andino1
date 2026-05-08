@@ -1,5 +1,5 @@
 <?php
-// Carga el archivo .env desde el mismo directorio (config/.env)
+// Carga el archivo .env desde el mismo directorio (config/.env).
 // Solo en desarrollo — en producción (Render) las env vars ya existen en el sistema
 $envFile = __DIR__ . '/.env';
 if (file_exists($envFile)) {
@@ -11,7 +11,6 @@ if (file_exists($envFile)) {
         if (!getenv($key)) putenv("$key=$value");
     }
 }
-
 // Credenciales de conexión leídas desde variables de entorno en producción (Render).
 // Los valores por defecto son los de desarrollo/staging con Supabase.
 // Nunca hardcodear credenciales reales en producción — usar las env vars de Render.
