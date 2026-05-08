@@ -31,6 +31,7 @@ $NAV = [
     ['id'=>'eventos',   'icon'=>'📅', 'label'=>'Eventos',   'href'=>$base.'/src/eventos/eventos.php'],
     ['id'=>'tienda',    'icon'=>'🛍️', 'label'=>'Tienda',    'href'=>$base.'/src/tienda/tienda.php'],
     ['id'=>'comunidad', 'icon'=>'🤝', 'label'=>'Comunidad', 'href'=>$base.'/src/comunidad/comunidad.php'],
+    ['id'=>'soporte',   'icon'=>'🆘', 'label'=>'Soporte',   'href'=>$base.'/src/soporte/index.php'],
 ];
 
 // Estado de verificación del artista — se lee de sesión para evitar una consulta extra a la BD
