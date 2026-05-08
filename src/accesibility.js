@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  // Salida silenciosa si el navegador no soporta SpeechSynthesis (ej. algunos bots, SSR).
+  // Salida silenciosa si el navegador no soporta SpeechSynthesis (ej. algunos bots, SSR)
   if (!window.speechSynthesis) return;
 
   const synth = window.speechSynthesis;
