@@ -1,12 +1,25 @@
 <?php
+// Carga el archivo .env desde el mismo directorio (config/.env)
+// Solo en desarrollo — en producción (Render) las env vars ya existen en el sistema
+$envFile = __DIR__ . '/.env';
+if (file_exists($envFile)) {
+    foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        if (str_starts_with(trim($line), '#') || !str_contains($line, '=')) continue;
+        [$key, $value] = explode('=', $line, 2);
+        $key   = trim($key);
+        $value = trim($value);
+        if (!getenv($key)) putenv("$key=$value");
+    }
+}
+
 // Credenciales de conexión leídas desde variables de entorno en producción (Render).
 // Los valores por defecto son los de desarrollo/staging con Supabase.
 // Nunca hardcodear credenciales reales en producción — usar las env vars de Render.
-define('DB_HOST', getenv('DB_HOST') ?: 'aws-1-us-east-1.pooler.supabase.com');
-define('DB_PORT', (int)(getenv('DB_PORT') ?: '6543'));
-define('DB_NAME', getenv('DB_NAME') ?: 'postgres');
-define('DB_USER', getenv('DB_USER') ?: 'postgres.vyyqmssvfcicxwguvyeb');
-define('DB_PASS', getenv('DB_PASS') ?: '8jACXQsawav9YsNR');
+define('DB_HOST', getenv('DB_HOST') ?: '');
+define('DB_PORT', (int)(getenv('DB_PORT') ?: ''));
+define('DB_NAME', getenv('DB_NAME') ?: '');
+define('DB_USER', getenv('DB_USER') ?: '');
+define('DB_PASS', getenv('DB_PASS') ?: '');
 
 // Conexión singleton a PostgreSQL vía PDO.
 // La primera llamada abre la conexión; las siguientes reutilizan la misma instancia.
