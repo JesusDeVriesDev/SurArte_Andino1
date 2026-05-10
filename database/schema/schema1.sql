@@ -91,40 +91,6 @@ CREATE TABLE IF NOT EXISTS pedido_items (
     cantidad    INT           NOT NULL DEFAULT 1
 );
 
-CREATE INDEX IF NOT EXISTS idx_eventos_fecha      ON eventos(fecha_inicio);
-CREATE INDEX IF NOT EXISTS idx_eventos_categoria  ON eventos(categoria);
-CREATE INDEX IF NOT EXISTS idx_productos_artista  ON productos(artista_id);
-CREATE INDEX IF NOT EXISTS idx_artistas_usuario   ON artistas(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_artistas_verif     ON artistas(verificado);
-CREATE INDEX IF NOT EXISTS idx_carrito_usuario    ON carrito_items(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_pedidos_usuario    ON pedidos(usuario_id);
-
--- admin@localhost.com 123456%xdA
-INSERT INTO usuarios (nombre, email, password, rol) VALUES
-('Admin Local', 'admin@localhost.com', '$2y$10$HaawU8DOHk/34SUWbh7WIu2xhzFhYEiHDhGg9p4S8c9gNP1/O2ddW', 'admin')
-ON CONFLICT (email) DO NOTHING;
-
-INSERT INTO artistas (nombre, disciplina, bio, municipio, verificado) VALUES
-('María Elena Criollo',   'Barniz de Pasto',        'Maestra en mopa-mopa, 20+ años de experiencia.', 'Pasto',    TRUE),
-('Carlos Andrés Pantoja', 'Cerámica Contemporánea', 'Escultor con presencia en bienales nacionales.', 'Pasto',    TRUE),
-('Rosa Inés Muñoz',       'Música Andina',           'Directora del grupo Voz del Galeras.',           'Pasto',    TRUE)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO eventos (titulo, categoria, lugar, municipio, latitud, longitud, fecha_inicio, precio) VALUES
-('Festival de Música Andina del Sur', 'musica',    'Teatro Guillermo León Valencia', 'Pasto',    1.2136, -77.2811, NOW() + INTERVAL '8 days',  0),
-('Exposición: Barniz de Pasto',       'arte',      'Museo Juan Lorenzo Lucero',      'Pasto',    1.2144, -77.2793, NOW() + INTERVAL '15 days', 0),
-('Taller de Tejeduría Camëntsá',      'artesania', 'Casa de la Cultura',             'Sibundoy', 1.1981, -76.9203, NOW() + INTERVAL '29 days', 15000)
-ON CONFLICT DO NOTHING;
-
-INSERT INTO productos (artista_id, nombre, descripcion, categoria, precio, stock, imagen_url) VALUES
-((SELECT id FROM artistas WHERE nombre='María Elena Criollo' LIMIT 1),   'Caja decorativa en Barniz de Pasto',     'Caja artesanal con técnica mopa-mopa.',          'artesania', 85000,  5, NULL),
-((SELECT id FROM artistas WHERE nombre='María Elena Criollo' LIMIT 1),   'Plato decorativo Barniz de Pasto',       'Plato ornamental con diseños nariñenses.',       'artesania', 65000,  3, NULL),
-((SELECT id FROM artistas WHERE nombre='Carlos Andrés Pantoja' LIMIT 1), 'Escultura cerámica volcánica',           'Escultura inspirada en el volcán Galeras.',     'arte',      180000, 2, NULL),
-((SELECT id FROM artistas WHERE nombre='Carlos Andrés Pantoja' LIMIT 1), 'Vasija artística contemporánea',         'Pieza única de cerámica con acabado natural.',   'arte',      95000,  4, NULL),
-((SELECT id FROM artistas WHERE nombre='Rosa Inés Muñoz' LIMIT 1),       'Disco Música Andina - Voces del Galeras','Álbum con música tradicional andina de Nariño.','musica',    30000,  10, NULL),
-((SELECT id FROM artistas WHERE nombre='Rosa Inés Muñoz' LIMIT 1),       'Quena Andina artesanal',                 'Quena elaborada a mano por artesanos locales.',  'musica',    45000,  7, NULL)
-ON CONFLICT DO NOTHING;
-
 CREATE TABLE IF NOT EXISTS producto_comentarios (
     id          UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     producto_id UUID         NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
@@ -133,6 +99,14 @@ CREATE TABLE IF NOT EXISTS producto_comentarios (
     creado_en   TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     editado_en  TIMESTAMPTZ
 );
+
+CREATE INDEX IF NOT EXISTS idx_eventos_fecha      ON eventos(fecha_inicio);
+CREATE INDEX IF NOT EXISTS idx_eventos_categoria  ON eventos(categoria);
+CREATE INDEX IF NOT EXISTS idx_productos_artista  ON productos(artista_id);
+CREATE INDEX IF NOT EXISTS idx_artistas_usuario   ON artistas(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_artistas_verif     ON artistas(verificado);
+CREATE INDEX IF NOT EXISTS idx_carrito_usuario    ON carrito_items(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_pedidos_usuario    ON pedidos(usuario_id);
  
 CREATE INDEX IF NOT EXISTS idx_comentarios_producto ON producto_comentarios(producto_id);
 CREATE INDEX IF NOT EXISTS idx_comentarios_usuario  ON producto_comentarios(usuario_id);

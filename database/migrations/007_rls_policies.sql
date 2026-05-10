@@ -6,15 +6,12 @@
 -- Activar RLS en todas las tablas
 ALTER TABLE usuarios   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE artistas   ENABLE ROW LEVEL SECURITY;
-ALTER TABLE obras      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE eventos    ENABLE ROW LEVEL SECURITY;
-ALTER TABLE tickets    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE productos  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE pedidos    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE carrito_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE pedido_items ENABLE ROW LEVEL SECURITY;
-ALTER TABLE posts      ENABLE ROW LEVEL SECURITY;
-ALTER TABLE comentarios ENABLE ROW LEVEL SECURITY;
-ALTER TABLE suscriptores ENABLE ROW LEVEL SECURITY;
+ALTER TABLE producto_comentarios ENABLE ROW LEVEL SECURITY;
 
 -- ─────────────────────────────────────────
 -- USUARIOS: lectura pública, escritura solo propio
@@ -62,17 +59,6 @@ CREATE POLICY "eventos_update_own"
     USING (organizador_id = (SELECT id FROM usuarios WHERE auth_id = auth.uid()));
 
 -- ─────────────────────────────────────────
--- TICKETS: solo propietario
--- ─────────────────────────────────────────
-CREATE POLICY "tickets_select_own"
-    ON tickets FOR SELECT
-    USING (usuario_id = (SELECT id FROM usuarios WHERE auth_id = auth.uid()));
-
-CREATE POLICY "tickets_insert_auth"
-    ON tickets FOR INSERT
-    WITH CHECK (usuario_id = (SELECT id FROM usuarios WHERE auth_id = auth.uid()));
-
--- ─────────────────────────────────────────
 -- PRODUCTOS: lectura pública activos, escritura artistas
 -- ─────────────────────────────────────────
 CREATE POLICY "productos_select_active"
@@ -88,21 +74,16 @@ CREATE POLICY "productos_manage_own"
     );
 
 -- ─────────────────────────────────────────
--- POSTS: lectura pública, escritura autenticados
+-- COMENTARIOS: lectura pública, escritura autenticados
 -- ─────────────────────────────────────────
-CREATE POLICY "posts_select_public"
-    ON posts FOR SELECT USING (true);
+CREATE POLICY "comentarios_select_public"
+    ON producto_comentarios FOR SELECT USING (true);
 
-CREATE POLICY "posts_insert_auth"
-    ON posts FOR INSERT
+CREATE POLICY "comentarios_insert_auth"
+    ON producto_comentarios FOR INSERT
     WITH CHECK (auth.uid() IS NOT NULL);
 
-CREATE POLICY "posts_update_own"
-    ON posts FOR UPDATE
-    USING (autor_id = (SELECT id FROM usuarios WHERE auth_id = auth.uid()));
+CREATE POLICY "comentarios_update_own"
+    ON producto_comentarios FOR UPDATE
+    USING (usuario_id = (SELECT id FROM usuarios WHERE auth_id = auth.uid()));
 
--- ─────────────────────────────────────────
--- SUSCRIPTORES: solo inserción anónima
--- ─────────────────────────────────────────
-CREATE POLICY "suscriptores_insert"
-    ON suscriptores FOR INSERT WITH CHECK (true);
